@@ -286,7 +286,7 @@ Si le temps le permet après Phase 9 : **dashboard admin** (modération médecin
 | 2 | Auth Firebase | ✅ |
 | 3 | Modèle de données | ✅ |
 | 4 | Annuaire & recherche | ✅ |
-| 5 | Prise de RDV | ⬜ |
+| 5 | Prise de RDV | ✅ |
 | 6 | Chatbot OpenRouter | ⬜ |
 | 7 | Notifications mail | ⬜ |
 | 8 | Visio Jitsi | ⬜ |
