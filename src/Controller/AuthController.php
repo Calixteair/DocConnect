@@ -17,6 +17,7 @@ use Kreait\Firebase\Exception\Auth\FailedToVerifyToken;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -139,10 +140,18 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/logout', name: 'app_logout', methods: ['GET', 'POST'])]
-    public function logout(): RedirectResponse
+    public function logout(Request $request, Security $security): RedirectResponse
     {
+        // 1) Invalide le token + la session Symfony (sinon il re-authentifie
+        //    depuis _security_main au prochain hit, même sans le cookie Firebase).
+        $security->logout(validateCsrfToken: false);
+        $request->getSession()->invalidate();
+
+        // 2) Efface le cookie httpOnly Firebase ID token.
         $response = new RedirectResponse($this->generateUrl('app_home'));
-        $response->headers->clearCookie(FirebaseAuthenticator::COOKIE_NAME, '/', null, true, true, 'lax');
+        $secure = $this->getParameter('kernel.environment') !== 'dev';
+        $response->headers->clearCookie(FirebaseAuthenticator::COOKIE_NAME, '/', null, $secure, true, 'lax');
+
         return $response;
     }
 

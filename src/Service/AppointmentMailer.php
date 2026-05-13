@@ -32,12 +32,19 @@ final class AppointmentMailer
         private readonly string $fromName,
     ) {}
 
+    /**
+     * Mailtrap sandbox free limite à 1 mail / seconde. Sans ce throttle,
+     * le 2e destinataire reçoit une 429 "Too many emails per second".
+     */
+    private const THROTTLE_MICROSECONDS = 1_100_000;
+
     public function sendConfirmation(Appointment $appointment): void
     {
         $patient = $appointment->getPatient()->getUser();
         $doctor = $appointment->getSlot()->getDoctor()->getUser();
 
         $this->dispatch($appointment, $patient, 'email/appointment_confirmed', 'Rendez-vous confirmé');
+        usleep(self::THROTTLE_MICROSECONDS);
         $this->dispatch($appointment, $doctor, 'email/appointment_confirmed', 'Nouveau rendez-vous');
     }
 
@@ -47,6 +54,7 @@ final class AppointmentMailer
         $doctor = $appointment->getSlot()->getDoctor()->getUser();
 
         $this->dispatch($appointment, $patient, 'email/appointment_cancelled', 'Rendez-vous annulé');
+        usleep(self::THROTTLE_MICROSECONDS);
         $this->dispatch($appointment, $doctor, 'email/appointment_cancelled', 'Rendez-vous annulé');
     }
 

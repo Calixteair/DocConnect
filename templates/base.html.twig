@@ -28,11 +28,20 @@
                 <span>DocConnect</span>
             </a>
 
-            <nav class="header-actions" aria-label="Compte">
+            <nav
+                class="header-actions"
+                aria-label="Compte"
+                data-controller="logout"
+                data-logout-api-key-value="{{ firebase_api_key }}"
+                data-logout-auth-domain-value="{{ firebase_auth_domain }}"
+                data-logout-project-id-value="{{ firebase_project_id }}"
+                data-logout-app-id-value="{{ firebase_app_id }}"
+                data-logout-logout-url-value="{{ path('app_logout') }}"
+            >
                 {% if app.user %}
                     <span class="header-actions__user">{{ app.user.fullName }}</span>
                     <a href="{{ path('app_my_appointments') }}" class="btn btn--ghost btn--sm">Mes RDV</a>
-                    <a href="{{ path('app_logout') }}" class="btn btn--secondary btn--sm">Se déconnecter</a>
+                    <button type="button" class="btn btn--secondary btn--sm" data-action="click->logout#signOut">Se déconnecter</button>
                 {% else %}
                     <a href="{{ path('app_login') }}" class="btn btn--ghost btn--sm">Connexion</a>
                     <a href="{{ path('app_signup') }}" class="btn btn--primary btn--sm">Inscription</a>
