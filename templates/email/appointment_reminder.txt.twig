@@ -1,0 +1,11 @@
+Bonjour {{ recipient.firstName }},
+
+Rappel : votre rendez-vous est demain.
+
+Médecin : {{ doctor.displayName }}
+Date    : {{ slot.startAt|format_datetime(pattern='EEEE d MMMM y à HH:mm', locale='fr')|capitalize }}
+Mode    : {% if slot.mode.value == 'VIDEO' %}Téléconsultation{% else %}En cabinet{% set addr = doctor.addresses|first %}{% if addr %} — {{ addr.street }}, {{ addr.postalCode }} {{ addr.city }}{% endif %}{% endif %}
+
+Voir mon rendez-vous : {{ appointmentUrl }}
+
+DocConnect

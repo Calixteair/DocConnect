@@ -11,6 +11,7 @@ use App\Repository\AppointmentRepository;
 use App\Repository\PatientRepository;
 use App\Security\Voter\AppointmentVoter;
 use App\Service\AppointmentBookingService;
+use App\Service\AppointmentMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,6 +29,7 @@ final class AppointmentController extends AbstractController
         private readonly AppointmentRepository $appointments,
         private readonly PatientRepository $patients,
         private readonly EntityManagerInterface $em,
+        private readonly AppointmentMailer $mailer,
     ) {}
 
     #[Route('/app/appointments', name: 'app_appointment_create', methods: ['POST'])]
@@ -95,6 +97,8 @@ final class AppointmentController extends AbstractController
         $appointment->cancel();
         $appointment->getSlot()->markOpen();
         $this->em->flush();
+
+        $this->mailer->sendCancellation($appointment);
 
         $this->addFlash('success', 'Rendez-vous annulé. Le créneau est de nouveau disponible.');
 

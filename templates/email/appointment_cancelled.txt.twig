@@ -1,0 +1,10 @@
+Bonjour {{ recipient.firstName }},
+
+Le rendez-vous suivant a été annulé.
+
+Médecin       : {{ doctor.displayName }}
+Date initiale : {{ slot.startAt|format_datetime(pattern='EEEE d MMMM y à HH:mm', locale='fr')|capitalize }}
+
+Si l'annulation vient de vous, le créneau est de nouveau disponible pour d'autres patients. Sinon, vous pouvez chercher un autre créneau depuis votre espace DocConnect.
+
+DocConnect

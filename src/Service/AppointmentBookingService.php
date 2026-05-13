@@ -10,6 +10,7 @@ use App\Entity\Slot;
 use App\Enum\AppointmentMode;
 use App\Enum\SlotStatus;
 use App\Exception\SlotAlreadyBookedException;
+use App\Service\AppointmentMailer;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -26,6 +27,7 @@ final class AppointmentBookingService
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
+        private readonly AppointmentMailer $mailer,
     ) {}
 
     public function book(int $slotId, Patient $patient, ?string $motif = null): Appointment
@@ -61,6 +63,9 @@ final class AppointmentBookingService
                 'slot_id' => $slotId,
                 'patient_id' => $patient->getId(),
             ]);
+
+            // Mail post-commit : si l'envoi échoue, on log mais on ne reverse pas la résa.
+            $this->mailer->sendConfirmation($appointment);
 
             return $appointment;
         } catch (SlotAlreadyBookedException $e) {

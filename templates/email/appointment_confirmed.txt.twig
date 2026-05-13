@@ -1,0 +1,14 @@
+Bonjour {{ recipient.firstName }},
+
+Votre rendez-vous est confirmé.
+
+Médecin : {{ doctor.displayName }}
+Date    : {{ slot.startAt|format_datetime(pattern='EEEE d MMMM y à HH:mm', locale='fr')|capitalize }}
+Mode    : {% if slot.mode.value == 'VIDEO' %}Téléconsultation{% else %}En cabinet{% set addr = doctor.addresses|first %}{% if addr %} — {{ addr.street }}, {{ addr.postalCode }} {{ addr.city }}{% endif %}{% endif %}
+{% if appointment.motif %}Motif   : {{ appointment.motif }}
+{% endif %}
+Voir mon rendez-vous : {{ appointmentUrl }}
+
+Vous pouvez annuler ce rendez-vous depuis votre espace jusqu'à 2 heures avant l'heure prévue.
+
+DocConnect

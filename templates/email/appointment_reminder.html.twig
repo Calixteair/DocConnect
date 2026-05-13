@@ -1,0 +1,49 @@
+{% extends 'email/_base.html.twig' %}
+
+{% block subject %}Rappel — votre rendez-vous demain avec {{ doctor.displayName }}{% endblock %}
+
+{% block content %}
+    <h1 style="margin: 0 0 16px; font-size: 24px; font-weight: 600; color: #1F2937;">Rappel : rendez-vous demain</h1>
+
+    <p style="margin: 0 0 24px; color: #1F2937;">
+        Bonjour {{ recipient.firstName }},<br>
+        Petit rappel : votre rendez-vous est <strong>demain</strong>.
+    </p>
+
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #EEF3FE; border: 1px solid #C7D7FA; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+        <tr>
+            <td style="padding: 8px 16px; color: #6B7280; font-size: 14px; width: 100px;">Médecin</td>
+            <td style="padding: 8px 16px; color: #1F2937; font-weight: 500;">{{ doctor.displayName }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 16px; color: #6B7280; font-size: 14px;">Date</td>
+            <td style="padding: 8px 16px; color: #1F2937; font-weight: 500;">{{ slot.startAt|format_datetime(pattern='EEEE d MMMM y à HH:mm', locale='fr')|capitalize }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 16px; color: #6B7280; font-size: 14px;">Mode</td>
+            <td style="padding: 8px 16px; color: #1F2937; font-weight: 500;">
+                {% if slot.mode.value == 'VIDEO' %}
+                    Téléconsultation
+                {% else %}
+                    En cabinet —
+                    {% set addr = doctor.addresses|first %}
+                    {% if addr %}{{ addr.street }}, {{ addr.postalCode }} {{ addr.city }}{% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+    <p style="margin: 0 0 24px;">
+        <a href="{{ appointmentUrl }}" style="display: inline-block; background-color: #1E5AE8; color: #FFFFFF; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">Voir mon rendez-vous</a>
+    </p>
+
+    {% if slot.mode.value == 'VIDEO' %}
+        <p style="margin: 0; color: #6B7280; font-size: 14px;">
+            Le bouton "Rejoindre la visio" apparaîtra dans votre espace 10 minutes avant l'heure du rendez-vous.
+        </p>
+    {% else %}
+        <p style="margin: 0; color: #6B7280; font-size: 14px;">
+            Pensez à arriver 5 à 10 minutes avant l'heure du rendez-vous.
+        </p>
+    {% endif %}
+{% endblock %}

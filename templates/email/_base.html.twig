@@ -1,0 +1,43 @@
+{# Base layout pour tous les mails — inline CSS, table-based (Outlook). #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block subject %}DocConnect{% endblock %}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #FAFBFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif; color: #1F2937; line-height: 1.5;">
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #FAFBFC; padding: 32px 16px;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px;">
+                    <tr>
+                        <td style="padding: 24px 32px; border-bottom: 1px solid #E5E7EB;">
+                            <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td>
+                                        <span style="display: inline-block; vertical-align: middle; width: 24px; height: 24px; background-color: #1E5AE8; border-radius: 6px;">&nbsp;</span>
+                                        <span style="display: inline-block; vertical-align: middle; margin-left: 8px; font-size: 18px; font-weight: 600; color: #1F2937;">DocConnect</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 32px;">
+                            {% block content %}{% endblock %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 16px 32px 24px; border-top: 1px solid #E5E7EB; font-size: 12px; color: #6B7280; text-align: center;">
+                            Ce message vous est envoyé par DocConnect, plateforme tunisienne de prise de rendez-vous médicaux.<br>
+                            Pour toute question, contactez-nous depuis votre espace.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
