@@ -1,0 +1,85 @@
+/*
+ * DocConnect — design tokens.
+ * Source de vérité : docs/style-tile.md §2-7.
+ * Aucune valeur hex hors de ce fichier. Aucune valeur d'espacement hors échelle.
+ */
+
+:root {
+  /* ---- Couleurs neutres ---- */
+  --color-bg: #FAFBFC;
+  --color-surface: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-border-strong: #D1D5DB;
+  --color-text: #1F2937;
+  --color-text-muted: #6B7280;
+  --color-text-subtle: #9CA3AF;
+  --color-neutral-soft: #F3F4F6;
+
+  /* ---- Accent bleu médical ---- */
+  --color-primary: #1E5AE8;
+  --color-primary-hover: #1947C7;
+  --color-primary-soft: #EEF3FE;
+  --color-primary-border: #C7D7FA;
+
+  /* ---- Statuts sémantiques ---- */
+  --color-success: #059669;
+  --color-success-soft: #ECFDF5;
+  --color-warning: #B45309;
+  --color-warning-soft: #FFFBEB;
+  --color-warning-border: #FCD34D;
+  --color-danger: #DC2626;
+  --color-danger-soft: #FEF2F2;
+
+  /* ---- Espacements (base 4) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ---- Radius ---- */
+  --radius-card: 8px;
+  --radius-button: 6px;
+  --radius-pill: 999px;
+
+  /* ---- Ombres ---- */
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.04);
+  --shadow-elevated: 0 8px 24px rgb(0 0 0 / 0.08);
+
+  /* ---- Typographie ---- */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+
+  --text-display: 40px;
+  --text-h1: 32px;
+  --text-h2: 24px;
+  --text-h3: 20px;
+  --text-h4: 18px;
+  --text-body-lg: 18px;
+  --text-body: 16px;
+  --text-body-sm: 14px;
+  --text-caption: 12px;
+
+  /* ---- Motion ---- */
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+  --motion-slow: 400ms;
+  --motion-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Layout ---- */
+  --container-max: 1200px;
+  --container-px: 32px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

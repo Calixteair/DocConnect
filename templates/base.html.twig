@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}DocConnect — prise de rendez-vous médicaux{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}DocConnect — réservez un rendez-vous chez un médecin tunisien en cabinet ou en téléconsultation.{% endblock %}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@500;600&display=swap">
+
+    {% block stylesheets %}{% endblock %}
+
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+    <a href="#main" class="skip-link visually-hidden">Aller au contenu principal</a>
+
+    <header class="site-header" role="banner">
+        <div class="container site-header__inner">
+            <a href="{{ path('app_home') }}" class="brand" aria-label="DocConnect — accueil">
+                <span class="brand__mark" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2v2"/><path d="M5 2v2"/><path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"/><path d="M8 15a6 6 0 0 0 12 0v-3"/><circle cx="20" cy="10" r="2"/></svg>
+                </span>
+                <span>DocConnect</span>
+            </a>
+        </div>
+    </header>
+
+    <main id="main">
+        {% block body %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <div>DocConnect</div>
+            <nav class="site-footer__nav" aria-label="Liens secondaires">
+                <a href="#">À propos</a>
+                <a href="#">Mentions légales</a>
+                <a href="#">CGU</a>
+                <a href="#">Contact</a>
+            </nav>
+            <p>&copy; 2026</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,1765 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dr. Aymen Ben Ali — Médecin généraliste, Tunis · DocConnect</title>
+  <meta name="description" content="Fiche médecin DocConnect — Dr. Aymen Ben Ali, médecin généraliste à Tunis (Belvédère). Prendre rendez-vous en cabinet ou en téléconsultation." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* =========================================================================
+       Tokens
+       ========================================================================= */
+    :root {
+      /* Couleurs — neutres */
+      --color-bg: #FAFBFC;
+      --color-surface: #FFFFFF;
+      --color-border: #E5E7EB;
+      --color-border-strong: #D1D5DB;
+      --color-divider: #F3F4F6;
+      --color-text: #1F2937;
+      --color-text-muted: #6B7280;
+      --color-text-subtle: #9CA3AF;
+
+      /* Couleurs — accent */
+      --color-primary: #1E5AE8;
+      --color-primary-hover: #1947C7;
+      --color-primary-soft: #EEF3FE;
+      --color-primary-border: #C7D7FA;
+      --color-primary-ring: rgb(30 90 232 / 0.15);
+
+      /* Couleurs — statuts */
+      --color-success: #059669;
+      --color-success-soft: #ECFDF5;
+      --color-warning: #B45309;
+      --color-danger: #DC2626;
+      --color-danger-soft: #FEF2F2;
+
+      /* Surfaces tertiaires */
+      --color-overlay: rgb(15 23 42 / 0.5);
+      --color-segment-bg: #F3F4F6;
+      --color-ghost-hover: #F3F4F6;
+      --color-secondary-hover: #F9FAFB;
+
+      /* Typographies */
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+
+      /* Espacement (base 4) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-14: 56px;
+      --space-16: 64px;
+
+      /* Rayons */
+      --radius-button: 6px;
+      --radius-card: 8px;
+      --radius-pill: 999px;
+      --radius-inner: 4px;
+
+      /* Ombres */
+      --shadow-card: 0 1px 3px rgb(0 0 0 / 0.04);
+      --shadow-card-hover: 0 4px 12px rgb(0 0 0 / 0.06);
+      --shadow-modal: 0 8px 24px rgb(0 0 0 / 0.08);
+
+      /* Durées */
+      --motion-fast: 150ms;
+      --motion-base: 250ms;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+
+      /* Layout */
+      --container-max: 1200px;
+      --header-height: 72px;
+      --breadcrumb-height: 48px;
+      --sticky-top: 96px;
+    }
+
+    /* =========================================================================
+       Reset & base
+       ========================================================================= */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3, h4, p {
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    img, svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-radius: var(--radius-inner);
+    }
+
+    /* =========================================================================
+       Container
+       ========================================================================= */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-4);
+    }
+
+    @media (min-width: 768px) {
+      .container { padding: 0 var(--space-6); }
+    }
+    @media (min-width: 1024px) {
+      .container { padding: 0 var(--space-8); }
+    }
+    @media (min-width: 1280px) {
+      .container { padding: 0 var(--space-12); }
+    }
+
+    /* =========================================================================
+       Header
+       ========================================================================= */
+    .site-header {
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .site-header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-6);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--color-text);
+      letter-spacing: -0.01em;
+    }
+
+    .brand__mark {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-button);
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand__mark svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+    }
+
+    .header-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    /* =========================================================================
+       Boutons
+       ========================================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      height: 40px;
+      padding: 0 var(--space-4);
+      min-width: 96px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-button);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1;
+      color: var(--color-text);
+      background-color: transparent;
+      cursor: pointer;
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  border-color var(--motion-fast) var(--ease-standard),
+                  color var(--motion-fast) var(--ease-standard);
+      white-space: nowrap;
+    }
+
+    .btn--sm {
+      height: 32px;
+      padding: 0 var(--space-3);
+      font-size: 14px;
+    }
+
+    .btn--lg {
+      height: 48px;
+      padding: 0 var(--space-5);
+    }
+
+    .btn--primary {
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+    }
+    .btn--primary:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .btn--secondary {
+      background-color: var(--color-surface);
+      border-color: var(--color-border-strong);
+      color: var(--color-text);
+    }
+    .btn--secondary:hover {
+      background-color: var(--color-secondary-hover);
+      border-color: var(--color-text-muted);
+    }
+
+    .btn--ghost {
+      background-color: transparent;
+      color: var(--color-text);
+    }
+    .btn--ghost:hover {
+      background-color: var(--color-ghost-hover);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* =========================================================================
+       Breadcrumb
+       ========================================================================= */
+    .breadcrumb {
+      background-color: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .breadcrumb__inner {
+      height: var(--breadcrumb-height);
+      display: flex;
+      align-items: center;
+    }
+
+    .breadcrumb__link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      padding: var(--space-2) 0;
+      transition: color var(--motion-fast) var(--ease-standard);
+    }
+
+    .breadcrumb__link:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .breadcrumb__link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* =========================================================================
+       Page layout
+       ========================================================================= */
+    .page {
+      padding: var(--space-8) 0 var(--space-12);
+    }
+
+    .page__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+
+    @media (min-width: 1024px) {
+      .page__grid {
+        grid-template-columns: 5fr 7fr;
+        gap: var(--space-8);
+        align-items: start;
+      }
+
+      .page__col--right {
+        position: sticky;
+        top: var(--sticky-top);
+      }
+    }
+
+    /* =========================================================================
+       Card générique
+       ========================================================================= */
+    .card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-card);
+    }
+
+    @media (min-width: 768px) {
+      .card { padding: var(--space-6); }
+    }
+
+    /* =========================================================================
+       Carte médecin (colonne gauche)
+       ========================================================================= */
+    .doctor-header__photo {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-card);
+      background-color: var(--color-primary-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .doctor-header__photo svg {
+      width: 40px;
+      height: 40px;
+      opacity: 0.4;
+      stroke-width: 1.5;
+    }
+
+    @media (min-width: 768px) {
+      .doctor-header__photo {
+        width: 120px;
+        height: 120px;
+      }
+      .doctor-header__photo svg {
+        width: 56px;
+        height: 56px;
+      }
+    }
+
+    .doctor-header__identity {
+      margin-top: var(--space-4);
+    }
+
+    .doctor-header__name {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 28px;
+      line-height: 36px;
+      color: var(--color-text);
+      letter-spacing: -0.005em;
+    }
+
+    .doctor-header__specialty {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      margin-top: var(--space-1);
+    }
+
+    .doctor-header__location {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-top: var(--space-2);
+    }
+
+    .doctor-header__location svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .doctor-header__price-row {
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-divider);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--space-2);
+    }
+
+    .doctor-header__price {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .doctor-header__price-meta {
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    .doctor-header__languages {
+      margin-top: var(--space-3);
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    .doctor-header__badges {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-top: var(--space-4);
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      height: 24px;
+      padding: 0 var(--space-2);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1;
+      background-color: var(--color-segment-bg);
+      color: var(--color-text-muted);
+    }
+
+    .badge--visio {
+      background-color: var(--color-primary-soft);
+      color: var(--color-primary);
+      cursor: pointer;
+      transition: background-color var(--motion-fast) var(--ease-standard);
+    }
+    .badge--visio:hover { background-color: #E0EAFD; }
+
+    .badge svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .badge--success {
+      background-color: var(--color-success-soft);
+      color: var(--color-success);
+    }
+
+    /* Section titles in left column */
+    .section-block {
+      margin-top: var(--space-8);
+    }
+
+    .section-block__title {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 28px;
+      color: var(--color-text);
+      margin-bottom: var(--space-3);
+    }
+
+    .section-block__body {
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--color-text);
+    }
+
+    .section-block__readmore {
+      display: inline-block;
+      margin-top: var(--space-2);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-primary);
+    }
+    .section-block__readmore:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Adresse */
+    .address {
+      display: grid;
+      gap: var(--space-1);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--color-divider);
+    }
+    .address:first-child { padding-top: 0; border-top: 0; }
+
+    .address__street {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+
+    .address__meta {
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    .address__map {
+      margin-top: var(--space-3);
+      aspect-ratio: 16 / 9;
+      height: 120px;
+      border-radius: var(--radius-card);
+      background-color: var(--color-bg);
+      border: 1px solid var(--color-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* SVG map decorative */
+    .address__map svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* =========================================================================
+       Carte réservation (colonne droite)
+       ========================================================================= */
+    .booking__title {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 28px;
+      color: var(--color-text);
+    }
+
+    .booking__subtitle {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-top: var(--space-1);
+    }
+
+    /* Segmented control */
+    .segmented {
+      margin-top: var(--space-4);
+      display: inline-flex;
+      width: 240px;
+      max-width: 100%;
+      padding: var(--space-1);
+      background-color: var(--color-segment-bg);
+      border-radius: var(--radius-button);
+    }
+
+    .segmented__item {
+      flex: 1;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      border-radius: var(--radius-inner);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      background-color: transparent;
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  color var(--motion-fast) var(--ease-standard),
+                  box-shadow var(--motion-fast) var(--ease-standard);
+    }
+
+    .segmented__item svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .segmented__item[aria-selected="true"] {
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      box-shadow: var(--shadow-card);
+    }
+
+    /* Week nav */
+    .week-nav {
+      margin-top: var(--space-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-button);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color var(--motion-fast) var(--ease-standard),
+                  background-color var(--motion-fast) var(--ease-standard),
+                  color var(--motion-fast) var(--ease-standard);
+    }
+
+    .icon-btn:hover:not([disabled]) {
+      border-color: var(--color-text-muted);
+      background-color: var(--color-secondary-hover);
+    }
+
+    .icon-btn[disabled] {
+      cursor: not-allowed;
+      color: var(--color-text-subtle);
+      background-color: var(--color-bg);
+    }
+
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .week-nav__label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text);
+      text-align: center;
+      flex: 1;
+    }
+
+    /* Slot grid */
+    .slot-grid {
+      margin-top: var(--space-4);
+    }
+
+    .slot-grid__days {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: var(--space-3);
+    }
+
+    .slot-grid__day-head {
+      text-align: center;
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-divider);
+    }
+
+    .slot-grid__day-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+    }
+
+    .slot-grid__day-num {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-top: var(--space-1);
+      line-height: 1.2;
+    }
+
+    .slot-grid__day-head--today {
+      position: relative;
+    }
+    .slot-grid__day-head--today .slot-grid__day-num {
+      color: var(--color-primary);
+    }
+    .slot-grid__day-head--today::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-pill);
+      background-color: var(--color-primary);
+    }
+
+    .slot-grid__columns {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    .slot-col {
+      display: grid;
+      gap: 6px;
+    }
+
+    .slot {
+      height: 40px;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-button);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      font-size: 14px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  border-color var(--motion-fast) var(--ease-standard),
+                  color var(--motion-fast) var(--ease-standard);
+    }
+
+    .slot:hover {
+      border-color: var(--color-primary);
+      background-color: var(--color-primary-soft);
+    }
+
+    .slot[aria-pressed="true"],
+    .slot--selected {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #FFFFFF;
+    }
+
+    .slot-col__empty {
+      font-size: 12px;
+      color: var(--color-text-subtle);
+      text-align: center;
+      padding: var(--space-3) var(--space-1);
+      line-height: 1.4;
+    }
+
+    .slot-grid__more {
+      margin-top: var(--space-5);
+      text-align: center;
+    }
+
+    .slot-grid__more-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-primary);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-button);
+    }
+    .slot-grid__more-link:hover {
+      background-color: var(--color-primary-soft);
+    }
+    .slot-grid__more-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Mobile day tabs */
+    .slot-grid--mobile {
+      display: none;
+    }
+
+    @media (max-width: 767px) {
+      .slot-grid--desktop { display: none; }
+
+      .slot-grid--mobile {
+        display: block;
+      }
+
+      .day-tabs {
+        display: flex;
+        gap: var(--space-2);
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: var(--space-2);
+        margin: 0 calc(-1 * var(--space-4));
+        padding-left: var(--space-4);
+        padding-right: var(--space-4);
+      }
+      .day-tabs::-webkit-scrollbar { display: none; }
+
+      .day-tab {
+        flex-shrink: 0;
+        min-width: 56px;
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--color-border-strong);
+        border-radius: var(--radius-button);
+        background-color: var(--color-surface);
+        text-align: center;
+        transition: border-color var(--motion-fast) var(--ease-standard),
+                    background-color var(--motion-fast) var(--ease-standard),
+                    color var(--motion-fast) var(--ease-standard);
+      }
+
+      .day-tab__label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--color-text-muted);
+      }
+      .day-tab__num {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-text);
+        margin-top: var(--space-1);
+        line-height: 1.2;
+      }
+
+      .day-tab[aria-selected="true"] {
+        background-color: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+      .day-tab[aria-selected="true"] .day-tab__label,
+      .day-tab[aria-selected="true"] .day-tab__num {
+        color: #FFFFFF;
+      }
+
+      .day-slots {
+        margin-top: var(--space-4);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2);
+      }
+
+      .day-slots .slot {
+        height: 44px;
+      }
+    }
+
+    /* =========================================================================
+       Footer
+       ========================================================================= */
+    .site-footer {
+      background-color: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-8) 0;
+      margin-top: var(--space-12);
+    }
+
+    .site-footer__inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-6);
+    }
+
+    .footer-nav a {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      transition: color var(--motion-fast) var(--ease-standard);
+    }
+    .footer-nav a:hover {
+      color: var(--color-primary);
+    }
+
+    .footer__copy {
+      font-size: 14px;
+      color: var(--color-text-subtle);
+    }
+
+    /* =========================================================================
+       Modal
+       ========================================================================= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: var(--color-overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--motion-base) var(--ease-standard);
+    }
+
+    .modal-overlay[data-open="true"] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background-color: var(--color-surface);
+      width: 100%;
+      max-width: 480px;
+      border-radius: var(--radius-card);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-modal);
+      transform: translateY(8px);
+      transition: transform var(--motion-base) var(--ease-entrance);
+    }
+
+    .modal-overlay[data-open="true"] .modal {
+      transform: translateY(0);
+    }
+
+    .modal__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .modal__title {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 28px;
+      color: var(--color-text);
+    }
+
+    .modal__subtitle {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-top: var(--space-1);
+    }
+
+    .modal__close {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-button);
+      color: var(--color-text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  color var(--motion-fast) var(--ease-standard);
+    }
+    .modal__close:hover {
+      background-color: var(--color-ghost-hover);
+      color: var(--color-text);
+    }
+    .modal__close svg { width: 18px; height: 18px; }
+
+    .modal__recap {
+      margin-top: var(--space-4);
+      padding: var(--space-4);
+      background-color: var(--color-bg);
+      border-radius: var(--radius-card);
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .recap-row {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      align-items: baseline;
+      gap: var(--space-3);
+    }
+
+    .recap-row__label {
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    .recap-row__value {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+
+    .field {
+      margin-top: var(--space-6);
+    }
+
+    .field__label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: 6px;
+    }
+
+    .field__control {
+      position: relative;
+    }
+
+    .field__textarea {
+      width: 100%;
+      min-height: 96px;
+      padding: var(--space-3);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-button);
+      background-color: var(--color-surface);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--color-text);
+      resize: vertical;
+      transition: border-color var(--motion-fast) var(--ease-standard),
+                  box-shadow var(--motion-fast) var(--ease-standard);
+    }
+
+    .field__textarea::placeholder {
+      color: var(--color-text-subtle);
+    }
+
+    .field__textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-ring);
+    }
+
+    .field__counter {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      text-align: right;
+      margin-top: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .modal__footer {
+      margin-top: var(--space-6);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================================
+       Toast (caché par défaut, affiché après confirmation)
+       ========================================================================= */
+    .toast {
+      position: fixed;
+      right: var(--space-6);
+      bottom: var(--space-6);
+      max-width: 360px;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-modal);
+      padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+      display: none;
+      align-items: flex-start;
+      gap: var(--space-3);
+      z-index: 60;
+      animation: toast-in var(--motion-base) var(--ease-entrance);
+      border-left: 3px solid var(--color-success);
+    }
+
+    .toast[data-open="true"] {
+      display: flex;
+    }
+
+    .toast__icon {
+      color: var(--color-success);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .toast__icon svg { width: 20px; height: 20px; }
+
+    .toast__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .toast__msg {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-top: var(--space-1);
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================================================
+       Réduction de mouvement
+       ========================================================================= */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* =========================================================================
+       Utilities
+       ========================================================================= */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Responsive tweaks for the right column on smaller screens */
+    @media (max-width: 1023px) {
+      .booking-card .week-nav__label {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================================
+       Header
+       ====================================================================== -->
+  <header class="site-header" role="banner">
+    <div class="container site-header__inner">
+      <a href="#" class="brand" aria-label="DocConnect — accueil">
+        <span class="brand__mark" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2v2"></path><path d="M5 2v2"></path><path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"></path><path d="M8 15a6 6 0 0 0 12 0v-3"></path><circle cx="20" cy="10" r="2"></circle></svg>
+        </span>
+        <span>DocConnect</span>
+      </a>
+
+      <nav class="header-actions" aria-label="Compte">
+        <a href="#" class="btn btn--ghost btn--sm">Connexion</a>
+        <a href="#" class="btn btn--primary btn--sm">Inscription</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       Breadcrumb
+       ====================================================================== -->
+  <nav class="breadcrumb" aria-label="Fil d'Ariane">
+    <div class="container breadcrumb__inner">
+      <a href="#" class="breadcrumb__link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+        <span>Retour aux résultats</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ======================================================================
+       Main
+       ====================================================================== -->
+  <main class="container page" id="main">
+    <div class="page__grid">
+
+      <!-- ============================================================
+           Colonne gauche — fiche médecin
+           ============================================================ -->
+      <section class="page__col page__col--left" aria-labelledby="doctor-name">
+
+        <!-- Carte d'identité -->
+        <article class="card" aria-label="Identité du médecin">
+          <div class="doctor-header__photo" role="img" aria-label="Photo non renseignée par le praticien">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+
+          <div class="doctor-header__identity">
+            <h1 id="doctor-name" class="doctor-header__name">Dr. Aymen Ben Ali</h1>
+            <p class="doctor-header__specialty">Médecin généraliste</p>
+            <p class="doctor-header__location">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>Tunis — Belvédère</span>
+            </p>
+          </div>
+
+          <div class="doctor-header__price-row">
+            <span class="doctor-header__price">50 TND</span>
+            <span class="doctor-header__price-meta">— Conventionné CNAM</span>
+          </div>
+
+          <p class="doctor-header__languages">
+            Langues parlées : Arabe, Français, Anglais
+          </p>
+
+          <div class="doctor-header__badges">
+            <button type="button" class="badge badge--visio" id="badge-visio" aria-label="Téléconsultation disponible — afficher les créneaux visio">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 8-6 4 6 4V8Z"></path><rect width="14" height="12" x="2" y="6" rx="2" ry="2"></rect></svg>
+              <span>Visio</span>
+            </button>
+            <span class="badge badge--success">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <span>CNAM accepté</span>
+            </span>
+          </div>
+        </article>
+
+        <!-- À propos -->
+        <section class="section-block" aria-labelledby="about-title">
+          <h2 id="about-title" class="section-block__title">À propos</h2>
+          <p class="section-block__body">
+            Médecin généraliste depuis 2014, conventionné CNAM. Je consulte
+            adultes et adolescents, avec une attention particulière à la prévention
+            et au suivi des pathologies chroniques. Téléconsultation possible pour
+            les renouvellements d'ordonnance et les avis ponctuels.
+          </p>
+          <a href="#" class="section-block__readmore">Lire la suite</a>
+        </section>
+
+        <!-- Cabinets -->
+        <section class="section-block" aria-labelledby="cabinets-title">
+          <h2 id="cabinets-title" class="section-block__title">Adresses des cabinets</h2>
+
+          <div class="address">
+            <p class="address__street">12 av. Habib Bourguiba</p>
+            <p class="address__meta">1001 Tunis (Belvédère)</p>
+            <p class="address__meta">Station Métro Le Passage · Accès PMR</p>
+
+            <div class="address__map" role="img" aria-label="Carte du cabinet du Dr. Ben Ali, 12 av. Habib Bourguiba, Tunis">
+              <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="320" height="180" fill="#FAFBFC"/>
+                <!-- rues -->
+                <g stroke="#E5E7EB" stroke-width="6" fill="none" stroke-linecap="square">
+                  <path d="M-10 70 L330 60"/>
+                  <path d="M-10 130 L330 120"/>
+                  <path d="M80 -10 L90 190"/>
+                  <path d="M200 -10 L210 190"/>
+                </g>
+                <g stroke="#F3F4F6" stroke-width="2" fill="none">
+                  <path d="M-10 100 L330 95"/>
+                  <path d="M140 -10 L145 190"/>
+                </g>
+                <!-- blocs -->
+                <g fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1">
+                  <rect x="10" y="10" width="60" height="46" rx="2"/>
+                  <rect x="100" y="10" width="90" height="46" rx="2"/>
+                  <rect x="220" y="10" width="90" height="46" rx="2"/>
+                  <rect x="10" y="80" width="60" height="38" rx="2"/>
+                  <rect x="100" y="80" width="90" height="38" rx="2"/>
+                  <rect x="220" y="80" width="90" height="38" rx="2"/>
+                  <rect x="10" y="140" width="60" height="40" rx="2"/>
+                  <rect x="100" y="140" width="90" height="40" rx="2"/>
+                  <rect x="220" y="140" width="90" height="40" rx="2"/>
+                </g>
+                <!-- marqueur -->
+                <g transform="translate(150 85)">
+                  <circle r="14" fill="#1E5AE8" opacity="0.12"/>
+                  <circle r="6" fill="#1E5AE8"/>
+                  <circle r="2" fill="#FFFFFF"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+      <!-- ============================================================
+           Colonne droite — réservation
+           ============================================================ -->
+      <aside class="page__col page__col--right" aria-labelledby="booking-title">
+        <div class="card booking-card">
+
+          <h2 id="booking-title" class="booking__title">Prendre rendez-vous</h2>
+          <p class="booking__subtitle">Réservation en cabinet ou en téléconsultation. Confirmation par e-mail.</p>
+
+          <!-- Segmented Cabinet / Visio -->
+          <div class="segmented" role="tablist" aria-label="Mode de consultation">
+            <button type="button" class="segmented__item" role="tab" aria-selected="true" data-mode="cabinet">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>
+              <span>Cabinet</span>
+            </button>
+            <button type="button" class="segmented__item" role="tab" aria-selected="false" data-mode="visio">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 8-6 4 6 4V8Z"></path><rect width="14" height="12" x="2" y="6" rx="2" ry="2"></rect></svg>
+              <span>Visio</span>
+            </button>
+          </div>
+
+          <!-- Nav semaine -->
+          <div class="week-nav">
+            <button type="button" class="icon-btn" aria-label="Semaine précédente" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+            </button>
+            <div class="week-nav__label" aria-live="polite">Semaine du 12 au 17 mai 2026</div>
+            <button type="button" class="icon-btn" aria-label="Semaine suivante">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+            </button>
+          </div>
+
+          <!-- Grille créneaux desktop -->
+          <div class="slot-grid slot-grid--desktop" id="slotGridDesktop">
+            <div class="slot-grid__days" role="row">
+              <div class="slot-grid__day-head" role="columnheader">
+                <div class="slot-grid__day-label">lun.</div>
+                <div class="slot-grid__day-num">12</div>
+              </div>
+              <div class="slot-grid__day-head" role="columnheader">
+                <div class="slot-grid__day-label">mar.</div>
+                <div class="slot-grid__day-num">13</div>
+              </div>
+              <div class="slot-grid__day-head slot-grid__day-head--today" role="columnheader" aria-label="Mercredi 14 mai, aujourd'hui">
+                <div class="slot-grid__day-label">mer.</div>
+                <div class="slot-grid__day-num">14</div>
+              </div>
+              <div class="slot-grid__day-head" role="columnheader">
+                <div class="slot-grid__day-label">jeu.</div>
+                <div class="slot-grid__day-num">15</div>
+              </div>
+              <div class="slot-grid__day-head" role="columnheader">
+                <div class="slot-grid__day-label">ven.</div>
+                <div class="slot-grid__day-num">16</div>
+              </div>
+              <div class="slot-grid__day-head" role="columnheader">
+                <div class="slot-grid__day-label">sam.</div>
+                <div class="slot-grid__day-num">17</div>
+              </div>
+            </div>
+
+            <div class="slot-grid__columns" role="rowgroup">
+              <!-- Lundi 12 -->
+              <div class="slot-col" role="cell">
+                <button type="button" class="slot" data-day="Lundi 12 mai 2026" data-time="09:00" aria-label="Réserver le lundi 12 mai à 09:00">09:00</button>
+                <button type="button" class="slot" data-day="Lundi 12 mai 2026" data-time="09:30" aria-label="Réserver le lundi 12 mai à 09:30">09:30</button>
+                <button type="button" class="slot" data-day="Lundi 12 mai 2026" data-time="10:00" aria-label="Réserver le lundi 12 mai à 10:00">10:00</button>
+                <button type="button" class="slot" data-day="Lundi 12 mai 2026" data-time="11:00" aria-label="Réserver le lundi 12 mai à 11:00">11:00</button>
+                <button type="button" class="slot" data-day="Lundi 12 mai 2026" data-time="14:00" aria-label="Réserver le lundi 12 mai à 14:00">14:00</button>
+                <button type="button" class="slot" data-day="Lundi 12 mai 2026" data-time="15:30" aria-label="Réserver le lundi 12 mai à 15:30">15:30</button>
+                <button type="button" class="slot" data-day="Lundi 12 mai 2026" data-time="17:00" aria-label="Réserver le lundi 12 mai à 17:00">17:00</button>
+              </div>
+
+              <!-- Mardi 13 -->
+              <div class="slot-col" role="cell">
+                <button type="button" class="slot" data-day="Mardi 13 mai 2026" data-time="09:30" aria-label="Réserver le mardi 13 mai à 09:30">09:30</button>
+                <button type="button" class="slot" data-day="Mardi 13 mai 2026" data-time="10:20" aria-label="Réserver le mardi 13 mai à 10:20">10:20</button>
+                <button type="button" class="slot" data-day="Mardi 13 mai 2026" data-time="11:00" aria-label="Réserver le mardi 13 mai à 11:00">11:00</button>
+                <button type="button" class="slot" data-day="Mardi 13 mai 2026" data-time="14:00" aria-label="Réserver le mardi 13 mai à 14:00">14:00</button>
+                <button type="button" class="slot" data-day="Mardi 13 mai 2026" data-time="15:30" aria-label="Réserver le mardi 13 mai à 15:30">15:30</button>
+                <button type="button" class="slot" data-day="Mardi 13 mai 2026" data-time="16:00" aria-label="Réserver le mardi 13 mai à 16:00">16:00</button>
+                <button type="button" class="slot" data-day="Mardi 13 mai 2026" data-time="18:00" aria-label="Réserver le mardi 13 mai à 18:00">18:00</button>
+              </div>
+
+              <!-- Mercredi 14 -->
+              <div class="slot-col" role="cell">
+                <button type="button" class="slot" data-day="Mercredi 14 mai 2026" data-time="09:00" aria-label="Réserver le mercredi 14 mai à 09:00 avec le Dr. Aymen Ben Ali">09:00</button>
+                <button type="button" class="slot" data-day="Mercredi 14 mai 2026" data-time="10:00" aria-label="Réserver le mercredi 14 mai à 10:00 avec le Dr. Aymen Ben Ali">10:00</button>
+                <button type="button" class="slot" data-day="Mercredi 14 mai 2026" data-time="10:30" aria-label="Réserver le mercredi 14 mai à 10:30 avec le Dr. Aymen Ben Ali">10:30</button>
+                <button type="button" class="slot" data-day="Mercredi 14 mai 2026" data-time="11:20" aria-label="Réserver le mercredi 14 mai à 11:20 avec le Dr. Aymen Ben Ali">11:20</button>
+                <button type="button" class="slot" data-day="Mercredi 14 mai 2026" data-time="14:30" aria-label="Réserver le mercredi 14 mai à 14:30 avec le Dr. Aymen Ben Ali">14:30</button>
+                <button type="button" class="slot" data-day="Mercredi 14 mai 2026" data-time="16:00" aria-label="Réserver le mercredi 14 mai à 16:00 avec le Dr. Aymen Ben Ali">16:00</button>
+                <button type="button" class="slot" data-day="Mercredi 14 mai 2026" data-time="17:30" aria-label="Réserver le mercredi 14 mai à 17:30 avec le Dr. Aymen Ben Ali">17:30</button>
+              </div>
+
+              <!-- Jeudi 15 -->
+              <div class="slot-col" role="cell">
+                <button type="button" class="slot" data-day="Jeudi 15 mai 2026" data-time="09:00" aria-label="Réserver le jeudi 15 mai à 09:00">09:00</button>
+                <button type="button" class="slot" data-day="Jeudi 15 mai 2026" data-time="09:40" aria-label="Réserver le jeudi 15 mai à 09:40">09:40</button>
+                <button type="button" class="slot" data-day="Jeudi 15 mai 2026" data-time="10:20" aria-label="Réserver le jeudi 15 mai à 10:20">10:20</button>
+                <button type="button" class="slot" data-day="Jeudi 15 mai 2026" data-time="11:40" aria-label="Réserver le jeudi 15 mai à 11:40">11:40</button>
+                <button type="button" class="slot" data-day="Jeudi 15 mai 2026" data-time="14:00" aria-label="Réserver le jeudi 15 mai à 14:00">14:00</button>
+                <button type="button" class="slot" data-day="Jeudi 15 mai 2026" data-time="15:00" aria-label="Réserver le jeudi 15 mai à 15:00">15:00</button>
+                <button type="button" class="slot" data-day="Jeudi 15 mai 2026" data-time="18:30" aria-label="Réserver le jeudi 15 mai à 18:30">18:30</button>
+              </div>
+
+              <!-- Vendredi 16 (matin uniquement) -->
+              <div class="slot-col" role="cell">
+                <button type="button" class="slot" data-day="Vendredi 16 mai 2026" data-time="09:00" aria-label="Réserver le vendredi 16 mai à 09:00">09:00</button>
+                <button type="button" class="slot" data-day="Vendredi 16 mai 2026" data-time="09:20" aria-label="Réserver le vendredi 16 mai à 09:20">09:20</button>
+                <button type="button" class="slot" data-day="Vendredi 16 mai 2026" data-time="10:00" aria-label="Réserver le vendredi 16 mai à 10:00">10:00</button>
+                <button type="button" class="slot" data-day="Vendredi 16 mai 2026" data-time="10:40" aria-label="Réserver le vendredi 16 mai à 10:40">10:40</button>
+                <button type="button" class="slot" data-day="Vendredi 16 mai 2026" data-time="11:20" aria-label="Réserver le vendredi 16 mai à 11:20">11:20</button>
+                <p class="slot-col__empty">Pas de consultation l'après-midi.</p>
+              </div>
+
+              <!-- Samedi 17 -->
+              <div class="slot-col" role="cell">
+                <button type="button" class="slot" data-day="Samedi 17 mai 2026" data-time="09:00" aria-label="Réserver le samedi 17 mai à 09:00">09:00</button>
+                <button type="button" class="slot" data-day="Samedi 17 mai 2026" data-time="09:30" aria-label="Réserver le samedi 17 mai à 09:30">09:30</button>
+                <button type="button" class="slot" data-day="Samedi 17 mai 2026" data-time="10:30" aria-label="Réserver le samedi 17 mai à 10:30">10:30</button>
+                <button type="button" class="slot" data-day="Samedi 17 mai 2026" data-time="11:00" aria-label="Réserver le samedi 17 mai à 11:00">11:00</button>
+                <button type="button" class="slot" data-day="Samedi 17 mai 2026" data-time="11:30" aria-label="Réserver le samedi 17 mai à 11:30">11:30</button>
+                <button type="button" class="slot" data-day="Samedi 17 mai 2026" data-time="12:00" aria-label="Réserver le samedi 17 mai à 12:00">12:00</button>
+              </div>
+            </div>
+
+            <div class="slot-grid__more">
+              <a href="#" class="slot-grid__more-link">
+                <span>Voir plus de créneaux</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Variante mobile -->
+          <div class="slot-grid slot-grid--mobile" id="slotGridMobile">
+            <div class="day-tabs" role="tablist" aria-label="Jour à réserver">
+              <button type="button" class="day-tab" role="tab" aria-selected="false" data-day-key="lun-12">
+                <div class="day-tab__label">lun.</div>
+                <div class="day-tab__num">12</div>
+              </button>
+              <button type="button" class="day-tab" role="tab" aria-selected="false" data-day-key="mar-13">
+                <div class="day-tab__label">mar.</div>
+                <div class="day-tab__num">13</div>
+              </button>
+              <button type="button" class="day-tab" role="tab" aria-selected="true" data-day-key="mer-14">
+                <div class="day-tab__label">mer.</div>
+                <div class="day-tab__num">14</div>
+              </button>
+              <button type="button" class="day-tab" role="tab" aria-selected="false" data-day-key="jeu-15">
+                <div class="day-tab__label">jeu.</div>
+                <div class="day-tab__num">15</div>
+              </button>
+              <button type="button" class="day-tab" role="tab" aria-selected="false" data-day-key="ven-16">
+                <div class="day-tab__label">ven.</div>
+                <div class="day-tab__num">16</div>
+              </button>
+              <button type="button" class="day-tab" role="tab" aria-selected="false" data-day-key="sam-17">
+                <div class="day-tab__label">sam.</div>
+                <div class="day-tab__num">17</div>
+              </button>
+            </div>
+
+            <div class="day-slots" id="mobileDaySlots" aria-live="polite"></div>
+
+            <div class="slot-grid__more">
+              <a href="#" class="slot-grid__more-link">
+                <span>Voir plus de créneaux</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ======================================================================
+       Footer
+       ====================================================================== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container site-footer__inner">
+      <nav class="footer-nav" aria-label="Liens secondaires">
+        <a href="#">À propos</a>
+        <a href="#">Mentions légales</a>
+        <a href="#">CGU</a>
+        <a href="#">Contact</a>
+      </nav>
+      <p class="footer__copy">© 2026 DocConnect</p>
+    </div>
+  </footer>
+
+  <!-- ======================================================================
+       Modal de confirmation
+       ====================================================================== -->
+  <div class="modal-overlay" id="bookingModal" data-open="false" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal__header">
+        <div>
+          <h2 id="modalTitle" class="modal__title">Confirmer votre rendez-vous</h2>
+          <p class="modal__subtitle">Vérifiez les informations avant d'envoyer la demande.</p>
+        </div>
+        <button type="button" class="modal__close" id="modalClose" aria-label="Fermer la fenêtre">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="modal__recap" aria-label="Récapitulatif">
+        <div class="recap-row">
+          <span class="recap-row__label">Médecin</span>
+          <span class="recap-row__value">Dr. Aymen Ben Ali · Médecine générale</span>
+        </div>
+        <div class="recap-row">
+          <span class="recap-row__label">Date</span>
+          <span class="recap-row__value" id="recapDate">Mercredi 14 mai 2026 à 10:00</span>
+        </div>
+        <div class="recap-row">
+          <span class="recap-row__label">Mode</span>
+          <span class="recap-row__value" id="recapMode">Cabinet — 12 av. Habib Bourguiba, 1001 Tunis</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="motif">Motif de consultation</label>
+        <div class="field__control">
+          <textarea
+            id="motif"
+            class="field__textarea"
+            maxlength="500"
+            placeholder="Décrivez brièvement votre motif (ex : renouvellement d'ordonnance, douleur au genou…)"
+          ></textarea>
+        </div>
+        <div class="field__counter"><span id="motifCount">0</span>/500</div>
+      </div>
+
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" id="modalCancel">Annuler</button>
+        <button type="button" class="btn btn--primary" id="modalConfirm">Confirmer le RDV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       Toast confirmation (caché par défaut)
+       ====================================================================== -->
+  <div class="toast" id="confirmToast" role="status" aria-live="polite" data-open="false">
+    <div class="toast__icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+    </div>
+    <div>
+      <div class="toast__title">Rendez-vous confirmé</div>
+      <div class="toast__msg" id="toastMsg">Mercredi 14 mai à 10:00. Un e-mail de confirmation vient d'être envoyé.</div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       Scripts
+       ====================================================================== -->
+  <script>
+    (function () {
+      "use strict";
+
+      // ----- Données factices créneaux mobile
+      var mobileSlots = {
+        "lun-12": ["09:00", "09:30", "10:00", "11:00", "14:00", "15:30", "17:00"],
+        "mar-13": ["09:30", "10:20", "11:00", "14:00", "15:30", "16:00", "18:00"],
+        "mer-14": ["09:00", "10:00", "10:30", "11:20", "14:30", "16:00", "17:30"],
+        "jeu-15": ["09:00", "09:40", "10:20", "11:40", "14:00", "15:00", "18:30"],
+        "ven-16": ["09:00", "09:20", "10:00", "10:40", "11:20"],
+        "sam-17": ["09:00", "09:30", "10:30", "11:00", "11:30", "12:00"]
+      };
+
+      var dayLabels = {
+        "lun-12": "Lundi 12 mai 2026",
+        "mar-13": "Mardi 13 mai 2026",
+        "mer-14": "Mercredi 14 mai 2026",
+        "jeu-15": "Jeudi 15 mai 2026",
+        "ven-16": "Vendredi 16 mai 2026",
+        "sam-17": "Samedi 17 mai 2026"
+      };
+
+      // ----- Refs
+      var modal = document.getElementById("bookingModal");
+      var modalClose = document.getElementById("modalClose");
+      var modalCancel = document.getElementById("modalCancel");
+      var modalConfirm = document.getElementById("modalConfirm");
+      var recapDate = document.getElementById("recapDate");
+      var recapMode = document.getElementById("recapMode");
+      var motif = document.getElementById("motif");
+      var motifCount = document.getElementById("motifCount");
+      var toast = document.getElementById("confirmToast");
+      var toastMsg = document.getElementById("toastMsg");
+      var lastFocused = null;
+      var currentMode = "cabinet"; // cabinet | visio
+
+      // ----- Mode segmented
+      var segmentItems = document.querySelectorAll(".segmented__item");
+      segmentItems.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          segmentItems.forEach(function (b) { b.setAttribute("aria-selected", "false"); });
+          btn.setAttribute("aria-selected", "true");
+          currentMode = btn.getAttribute("data-mode");
+          updateRecapMode();
+        });
+      });
+
+      // Badge "Visio" en haut => switch mode + scroll
+      var visioBadge = document.getElementById("badge-visio");
+      if (visioBadge) {
+        visioBadge.addEventListener("click", function () {
+          var visioBtn = document.querySelector('.segmented__item[data-mode="visio"]');
+          if (visioBtn) visioBtn.click();
+          var card = document.querySelector(".booking-card");
+          if (card && card.scrollIntoView) card.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+
+      function updateRecapMode() {
+        if (!recapMode) return;
+        if (currentMode === "visio") {
+          recapMode.textContent = "Téléconsultation — lien visio envoyé par e-mail";
+        } else {
+          recapMode.textContent = "Cabinet — 12 av. Habib Bourguiba, 1001 Tunis";
+        }
+      }
+
+      // ----- Slots desktop : sélection + modale
+      var desktopSlots = document.querySelectorAll(".slot-grid--desktop .slot");
+      desktopSlots.forEach(function (slot) {
+        slot.addEventListener("click", function () {
+          desktopSlots.forEach(function (s) { s.setAttribute("aria-pressed", "false"); s.classList.remove("slot--selected"); });
+          slot.setAttribute("aria-pressed", "true");
+          slot.classList.add("slot--selected");
+          openModal(slot.getAttribute("data-day"), slot.getAttribute("data-time"), slot);
+        });
+      });
+
+      // ----- Mobile : jours + créneaux
+      var dayTabs = document.querySelectorAll(".day-tab");
+      var mobileSlotsContainer = document.getElementById("mobileDaySlots");
+
+      function renderMobileSlots(key) {
+        if (!mobileSlotsContainer) return;
+        var times = mobileSlots[key] || [];
+        var label = dayLabels[key] || "";
+        mobileSlotsContainer.innerHTML = "";
+        if (times.length === 0) {
+          var empty = document.createElement("p");
+          empty.className = "slot-col__empty";
+          empty.style.gridColumn = "1 / -1";
+          empty.textContent = "Aucun créneau libre " + label.toLowerCase() + ".";
+          mobileSlotsContainer.appendChild(empty);
+          return;
+        }
+        times.forEach(function (t) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "slot";
+          b.textContent = t;
+          b.setAttribute("data-day", label);
+          b.setAttribute("data-time", t);
+          b.setAttribute("aria-label", "Réserver le " + label.toLowerCase() + " à " + t);
+          b.addEventListener("click", function () {
+            openModal(label, t, b);
+          });
+          mobileSlotsContainer.appendChild(b);
+        });
+      }
+
+      dayTabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          dayTabs.forEach(function (t) { t.setAttribute("aria-selected", "false"); });
+          tab.setAttribute("aria-selected", "true");
+          renderMobileSlots(tab.getAttribute("data-day-key"));
+        });
+      });
+      renderMobileSlots("mer-14");
+
+      // ----- Modal
+      function openModal(day, time, trigger) {
+        if (!modal) return;
+        lastFocused = trigger || document.activeElement;
+        if (recapDate) recapDate.textContent = day + " à " + time;
+        updateRecapMode();
+        modal.setAttribute("data-open", "true");
+        modal.removeAttribute("aria-hidden");
+        document.body.style.overflow = "hidden";
+        // focus the textarea
+        setTimeout(function () { if (motif) motif.focus(); }, 50);
+      }
+
+      function closeModal() {
+        if (!modal) return;
+        modal.setAttribute("data-open", "false");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+      }
+
+      if (modalClose) modalClose.addEventListener("click", closeModal);
+      if (modalCancel) modalCancel.addEventListener("click", closeModal);
+      if (modal) modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && modal && modal.getAttribute("data-open") === "true") {
+          closeModal();
+        }
+      });
+
+      // Compteur motif
+      if (motif && motifCount) {
+        motif.addEventListener("input", function () {
+          motifCount.textContent = String(motif.value.length);
+        });
+      }
+
+      // Confirmation -> toast
+      if (modalConfirm) {
+        modalConfirm.addEventListener("click", function () {
+          var date = recapDate ? recapDate.textContent : "";
+          if (toastMsg) toastMsg.textContent = date + ". Un e-mail de confirmation vient d'être envoyé.";
+          closeModal();
+          if (toast) {
+            toast.setAttribute("data-open", "true");
+            setTimeout(function () { toast.setAttribute("data-open", "false"); }, 5000);
+          }
+        });
+      }
+
+      // Focus trap léger (Tab)
+      document.addEventListener("keydown", function (e) {
+        if (e.key !== "Tab") return;
+        if (!modal || modal.getAttribute("data-open") !== "true") return;
+        var focusables = modal.querySelectorAll('button, [href], textarea, input, [tabindex]:not([tabindex="-1"])');
+        if (focusables.length === 0) return;
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
+
+      // Week nav (visuel uniquement)
+      var weekBtns = document.querySelectorAll(".week-nav .icon-btn");
+      var weekLabel = document.querySelector(".week-nav__label");
+      var weekIndex = 0; // 0 = semaine actuelle
+      var weekLabels = [
+        "Semaine du 12 au 17 mai 2026",
+        "Semaine du 19 au 24 mai 2026",
+        "Semaine du 26 au 31 mai 2026"
+      ];
+      weekBtns.forEach(function (b, idx) {
+        b.addEventListener("click", function () {
+          if (b.hasAttribute("disabled")) return;
+          if (idx === 0) {
+            weekIndex = Math.max(0, weekIndex - 1);
+          } else {
+            weekIndex = Math.min(weekLabels.length - 1, weekIndex + 1);
+          }
+          if (weekLabel) weekLabel.textContent = weekLabels[weekIndex];
+          // disable précédent si retour semaine 0
+          weekBtns[0].toggleAttribute("disabled", weekIndex === 0);
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>

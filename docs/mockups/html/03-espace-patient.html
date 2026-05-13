@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mes rendez-vous — DocConnect</title>
+  <meta name="description" content="Espace patient DocConnect : visualisez vos rendez-vous à venir, rejoignez vos téléconsultations, consultez votre historique." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@500;600&display=swap" />
+
+  <style>
+    /* ============================================================
+       Tokens — source de vérité visuelle
+       Aucune valeur hex en dehors de :root
+       ============================================================ */
+    :root {
+      /* Couleurs — neutres */
+      --color-bg: #FAFBFC;
+      --color-surface: #FFFFFF;
+      --color-border: #E5E7EB;
+      --color-border-strong: #D1D5DB;
+      --color-text: #1F2937;
+      --color-text-muted: #6B7280;
+      --color-text-subtle: #9CA3AF;
+      --color-neutral-soft: #F3F4F6;
+      --color-neutral-softer: #F9FAFB;
+
+      /* Couleurs — primaire bleu médical */
+      --color-primary: #1E5AE8;
+      --color-primary-hover: #1947C7;
+      --color-primary-soft: #EEF3FE;
+      --color-primary-border: #C7D7FA;
+      --color-primary-ring: rgb(30 90 232 / 0.15);
+
+      /* Couleurs — sémantiques */
+      --color-success: #059669;
+      --color-success-soft: #ECFDF5;
+      --color-warning: #B45309;
+      --color-warning-soft: #FFFBEB;
+      --color-danger: #DC2626;
+      --color-danger-hover: #B91C1C;
+      --color-danger-soft: #FEF2F2;
+
+      /* Footer */
+      --color-footer-bg: #1F2937;
+      --color-footer-text: #D1D5DB;
+      --color-footer-text-dim: #9CA3AF;
+      --color-footer-border: #374151;
+
+      /* Overlay */
+      --color-overlay: rgb(15 23 42 / 0.5);
+
+      /* Espacements (base 4) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --space-16: 64px;
+
+      /* Typo */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+      --text-h1: 32px;
+      --text-h1-lh: 40px;
+      --text-h2: 20px;
+      --text-h2-lh: 28px;
+      --text-h3: 20px;
+      --text-h3-lh: 28px;
+      --text-h4: 18px;
+      --text-h4-lh: 26px;
+      --text-body-lg: 18px;
+      --text-body-lg-lh: 28px;
+      --text-body: 16px;
+      --text-body-lh: 24px;
+      --text-body-sm: 14px;
+      --text-body-sm-lh: 20px;
+      --text-caption: 12px;
+      --text-caption-lh: 16px;
+
+      /* Radius */
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-pill: 999px;
+
+      /* Ombres */
+      --shadow-card: 0 1px 3px rgb(0 0 0 / 0.04);
+      --shadow-card-hover: 0 4px 12px rgb(0 0 0 / 0.06);
+      --shadow-toast: 0 8px 24px rgb(0 0 0 / 0.08);
+
+      /* Motion */
+      --motion-fast: 150ms;
+      --motion-base: 250ms;
+      --motion-slow: 400ms;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+
+      /* Layout */
+      --container-max: 1200px;
+      --header-height: 72px;
+    }
+
+    /* ============================================================
+       Reset léger
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: var(--text-body);
+      line-height: var(--text-body-lh);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'cv11', 'ss01';
+    }
+    h1, h2, h3, h4, p { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    ul { margin: 0; padding: 0; list-style: none; }
+    svg { display: block; }
+
+    /* Focus visible uniforme (clavier uniquement) */
+    :focus { outline: none; }
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: var(--space-4);
+      background: var(--color-surface);
+      color: var(--color-text);
+      padding: var(--space-2) var(--space-4);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      z-index: 1000;
+      transition: top var(--motion-fast) var(--ease-standard);
+    }
+    .skip-link:focus-visible { top: var(--space-4); }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--space-4);
+    }
+    @media (min-width: 768px) { .container { padding-inline: var(--space-6); } }
+    @media (min-width: 1024px) { .container { padding-inline: var(--space-8); } }
+    @media (min-width: 1280px) { .container { padding-inline: var(--space-12); } }
+
+    /* ============================================================
+       Header
+       ============================================================ */
+    .site-header {
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      height: var(--header-height);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .site-header__inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--color-text);
+    }
+    .brand__mark {
+      width: 24px;
+      height: 24px;
+      color: var(--color-primary);
+    }
+    .brand__name { letter-spacing: -0.01em; }
+
+    .nav-desktop {
+      display: none;
+      align-items: center;
+      gap: var(--space-6);
+    }
+    @media (min-width: 768px) {
+      .nav-desktop { display: flex; }
+    }
+    .nav-link {
+      position: relative;
+      font-size: var(--text-body-sm);
+      font-weight: 500;
+      color: var(--color-text);
+      padding: var(--space-2) 0;
+      transition: color var(--motion-fast) var(--ease-standard);
+    }
+    .nav-link:hover { color: var(--color-primary); }
+    .nav-link--active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -26px;
+      height: 2px;
+      background-color: var(--color-primary);
+    }
+
+    /* AvatarMenu */
+    .avatar-menu { position: relative; }
+    .avatar-menu__trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: transparent;
+      border: 0;
+      padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
+      border-radius: var(--radius-pill);
+      color: var(--color-text);
+      transition: background-color var(--motion-fast) var(--ease-standard);
+    }
+    .avatar-menu__trigger:hover { background-color: var(--color-neutral-soft); }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      background-color: var(--color-primary-soft);
+      color: var(--color-primary);
+      font-size: var(--text-body-sm);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0;
+    }
+    .avatar-menu__name {
+      display: none;
+      font-size: var(--text-body-sm);
+      font-weight: 500;
+    }
+    @media (min-width: 640px) {
+      .avatar-menu__name { display: inline; }
+    }
+    .avatar-menu__chevron {
+      width: 16px;
+      height: 16px;
+      color: var(--color-text-muted);
+      transition: transform var(--motion-fast) var(--ease-standard);
+    }
+    .avatar-menu[data-open='true'] .avatar-menu__chevron { transform: rotate(180deg); }
+
+    .avatar-menu__panel {
+      position: absolute;
+      top: calc(100% + var(--space-2));
+      right: 0;
+      min-width: 200px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-toast);
+      padding: var(--space-2);
+      display: none;
+    }
+    .avatar-menu[data-open='true'] .avatar-menu__panel { display: block; }
+    .avatar-menu__item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-body-sm);
+      color: var(--color-text);
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      transition: background-color var(--motion-fast) var(--ease-standard);
+    }
+    .avatar-menu__item:hover { background-color: var(--color-neutral-soft); }
+    .avatar-menu__item svg { width: 16px; height: 16px; color: var(--color-text-muted); }
+    .avatar-menu__divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: var(--space-2) calc(var(--space-3) * -1 + var(--space-2));
+    }
+
+    /* Mobile menu trigger */
+    .menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: 0;
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+    }
+    .menu-toggle:hover { background-color: var(--color-neutral-soft); }
+    .menu-toggle svg { width: 20px; height: 20px; }
+    @media (min-width: 768px) { .menu-toggle { display: none; } }
+
+    .mobile-drawer {
+      display: none;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface);
+      padding: var(--space-4);
+    }
+    .mobile-drawer[data-open='true'] { display: block; }
+    .mobile-drawer__list { display: flex; flex-direction: column; gap: var(--space-1); }
+    .mobile-drawer__item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-body);
+      font-weight: 500;
+      color: var(--color-text);
+    }
+    .mobile-drawer__item:hover { background: var(--color-neutral-soft); }
+    .mobile-drawer__item svg { width: 18px; height: 18px; color: var(--color-text-muted); }
+    .mobile-drawer__item--active { color: var(--color-primary); background: var(--color-primary-soft); }
+    .mobile-drawer__item--active svg { color: var(--color-primary); }
+    @media (min-width: 768px) { .mobile-drawer { display: none !important; } }
+
+    /* ============================================================
+       Page header
+       ============================================================ */
+    .page-header {
+      padding-top: var(--space-8);
+      padding-bottom: var(--space-6);
+    }
+    .page-header__title {
+      font-size: 28px;
+      line-height: 36px;
+      font-weight: 600;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 768px) {
+      .page-header__title {
+        font-size: var(--text-h1);
+        line-height: var(--text-h1-lh);
+      }
+    }
+    .page-header__subtitle {
+      margin-top: var(--space-2);
+      font-size: var(--text-body);
+      line-height: var(--text-body-lh);
+      color: var(--color-text-muted);
+      max-width: 60ch;
+    }
+
+    /* ============================================================
+       Section
+       ============================================================ */
+    .section { padding-bottom: var(--space-8); }
+    .section + .section { padding-top: var(--space-4); }
+    .section__title {
+      font-size: var(--text-h2);
+      line-height: var(--text-h2-lh);
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+    }
+    .section--history { margin-top: var(--space-12); }
+    .section--history .section__title { color: var(--color-text); }
+
+    /* ============================================================
+       AppointmentCard
+       ============================================================ */
+    .appointment-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .appointment-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    @media (min-width: 768px) {
+      .appointment-card {
+        padding: var(--space-6);
+        flex-direction: row;
+        align-items: flex-start;
+        gap: var(--space-6);
+      }
+    }
+
+    /* Bloc date mobile (badge horizontal) */
+    .appointment-card__date-mobile {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      align-self: flex-start;
+      padding: var(--space-1) var(--space-2);
+      background-color: var(--color-neutral-softer);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-body-sm);
+      font-weight: 500;
+      color: var(--color-text);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    @media (min-width: 768px) { .appointment-card__date-mobile { display: none; } }
+
+    /* Bloc date desktop (carré 88×88) */
+    .appointment-card__date {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .appointment-card__date {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 88px;
+        height: 88px;
+        flex-shrink: 0;
+        background-color: var(--color-bg);
+        border-radius: var(--radius-md);
+        text-align: center;
+      }
+    }
+    .appointment-card__date-dow,
+    .appointment-card__date-mon {
+      font-size: var(--text-caption);
+      line-height: 1;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .appointment-card__date-day {
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-block: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Bloc info */
+    .appointment-card__info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .appointment-card__doctor {
+      font-family: var(--font-serif);
+      font-size: var(--text-h3);
+      line-height: var(--text-h3-lh);
+      font-weight: 600;
+      color: var(--color-text);
+      letter-spacing: -0.005em;
+    }
+    .appointment-card__specialty {
+      font-size: var(--text-body-sm);
+      line-height: var(--text-body-sm-lh);
+      font-weight: 500;
+      color: var(--color-text-muted);
+    }
+    .appointment-card__when {
+      margin-top: var(--space-3);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2) var(--space-3);
+      font-size: var(--text-body-sm);
+      line-height: var(--text-body-sm-lh);
+      color: var(--color-text);
+    }
+    .appointment-card__where {
+      margin-top: var(--space-1);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-body-sm);
+      line-height: var(--text-body-sm-lh);
+      color: var(--color-text-muted);
+    }
+    .appointment-card__where svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      color: var(--color-text-muted);
+    }
+
+    /* Bloc actions */
+    .appointment-card__actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      align-items: stretch;
+    }
+    @media (min-width: 768px) {
+      .appointment-card__actions {
+        align-items: flex-end;
+        flex-shrink: 0;
+        min-width: 200px;
+      }
+    }
+
+    /* Variante historique */
+    .appointment-card--past {
+      opacity: 0.85;
+    }
+    .appointment-card--past .appointment-card__date {
+      background-color: var(--color-neutral-soft);
+    }
+    .appointment-card--past .appointment-card__date-day { color: var(--color-text-muted); }
+    .appointment-card--past .appointment-card__doctor { color: var(--color-text-muted); }
+    .appointment-card--past .appointment-card__when { color: var(--color-text-muted); }
+
+    /* ============================================================
+       Buttons
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      height: 48px;
+      padding-inline: var(--space-4);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-body);
+      font-weight: 500;
+      line-height: 1;
+      border: 1px solid transparent;
+      transition:
+        background-color var(--motion-fast) var(--ease-standard),
+        border-color var(--motion-fast) var(--ease-standard),
+        color var(--motion-fast) var(--ease-standard);
+      white-space: nowrap;
+      width: 100%;
+    }
+    @media (min-width: 768px) {
+      .btn { height: 40px; width: auto; min-width: 120px; }
+    }
+    .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .btn--primary {
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+    }
+    .btn--primary:hover { background-color: var(--color-primary-hover); }
+
+    .btn--secondary {
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+    .btn--secondary:hover {
+      background-color: var(--color-neutral-softer);
+      border-color: var(--color-text-muted);
+    }
+
+    .btn--ghost {
+      background-color: transparent;
+      color: var(--color-text);
+    }
+    .btn--ghost:hover { background-color: var(--color-neutral-soft); }
+
+    .btn--danger-outline {
+      background-color: var(--color-surface);
+      color: var(--color-danger);
+      border-color: var(--color-danger);
+    }
+    .btn--danger-outline:hover { background-color: var(--color-danger-soft); }
+
+    .btn--danger-solid {
+      background-color: var(--color-danger);
+      color: var(--color-surface);
+    }
+    .btn--danger-solid:hover { background-color: var(--color-danger-hover); }
+
+    /* ============================================================
+       Badges
+       ============================================================ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      height: 24px;
+      padding-inline: var(--space-2);
+      border-radius: var(--radius-pill);
+      font-size: var(--text-caption);
+      font-weight: 500;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .badge--success {
+      background-color: var(--color-success-soft);
+      color: var(--color-success);
+    }
+    .badge--warning {
+      background-color: var(--color-warning-soft);
+      color: var(--color-warning);
+    }
+    .badge--danger {
+      background-color: var(--color-danger-soft);
+      color: var(--color-danger);
+    }
+    .badge--neutral {
+      background-color: var(--color-neutral-soft);
+      color: var(--color-text-muted);
+    }
+    .badge--info {
+      background-color: var(--color-primary-soft);
+      color: var(--color-primary);
+    }
+    .badge--info svg { width: 12px; height: 12px; }
+
+    /* ============================================================
+       Footer
+       ============================================================ */
+    .site-footer {
+      background-color: var(--color-footer-bg);
+      color: var(--color-footer-text);
+      padding-block: var(--space-12);
+      margin-top: var(--space-16);
+    }
+    .site-footer__inner {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+    @media (min-width: 768px) {
+      .site-footer__inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    .site-footer__brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 600;
+      font-size: var(--text-body);
+      color: var(--color-surface);
+    }
+    .site-footer__nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-6);
+    }
+    .site-footer__link {
+      font-size: var(--text-body-sm);
+      color: var(--color-footer-text);
+      transition: color var(--motion-fast) var(--ease-standard);
+    }
+    .site-footer__link:hover { color: var(--color-surface); }
+    .site-footer__copy {
+      font-size: var(--text-body-sm);
+      color: var(--color-footer-text-dim);
+    }
+
+    /* ============================================================
+       Chatbot flottant
+       ============================================================ */
+    .chatbot-fab {
+      position: fixed;
+      right: var(--space-4);
+      bottom: var(--space-4);
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-pill);
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-toast);
+      z-index: 40;
+      transition: background-color var(--motion-fast) var(--ease-standard);
+    }
+    .chatbot-fab:hover { background-color: var(--color-primary-hover); }
+    .chatbot-fab svg { width: 24px; height: 24px; }
+    @media (min-width: 768px) {
+      .chatbot-fab {
+        right: var(--space-8);
+        bottom: var(--space-8);
+      }
+    }
+
+    /* ============================================================
+       Modal
+       ============================================================ */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+    .modal[data-open='true'] {
+      display: flex;
+      animation: modal-fade-in var(--motion-base) var(--ease-standard);
+    }
+    .modal__overlay {
+      position: absolute;
+      inset: 0;
+      background-color: var(--color-overlay);
+    }
+    .modal__dialog {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      background-color: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-toast);
+      padding: var(--space-6);
+      animation: modal-slide-in var(--motion-base) var(--ease-emphasized);
+    }
+    .modal__title {
+      font-size: var(--text-h3);
+      line-height: var(--text-h3-lh);
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .modal__recap {
+      margin-top: var(--space-4);
+      padding: var(--space-4);
+      background-color: var(--color-bg);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .modal__recap-doctor {
+      font-family: var(--font-serif);
+      font-size: var(--text-body);
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .modal__recap-meta {
+      font-size: var(--text-body-sm);
+      color: var(--color-text-muted);
+    }
+    .modal__text {
+      margin-top: var(--space-4);
+      font-size: var(--text-body-sm);
+      line-height: var(--text-body-sm-lh);
+      color: var(--color-text);
+    }
+    .modal__actions {
+      margin-top: var(--space-6);
+      display: flex;
+      flex-direction: column-reverse;
+      gap: var(--space-3);
+    }
+    @media (min-width: 640px) {
+      .modal__actions {
+        flex-direction: row;
+        justify-content: flex-end;
+      }
+    }
+    .modal__close {
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 0;
+      color: var(--color-text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal__close:hover { background-color: var(--color-neutral-soft); color: var(--color-text); }
+    .modal__close svg { width: 18px; height: 18px; }
+
+    @keyframes modal-fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes modal-slide-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Visually hidden util */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Main wrapper */
+    main { min-height: calc(100vh - var(--header-height)); }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu</a>
+
+  <!-- ==========================================================
+       Header authentifié
+       ========================================================== -->
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="#" class="brand" aria-label="DocConnect — accueil">
+        <svg class="brand__mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+        </svg>
+        <span class="brand__name">DocConnect</span>
+      </a>
+
+      <nav class="nav-desktop" aria-label="Navigation principale">
+        <a href="#" class="nav-link nav-link--active" aria-current="page">Mes RDV</a>
+
+        <div class="avatar-menu" data-controller="avatar-menu" data-open="false">
+          <button
+            class="avatar-menu__trigger"
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            data-action="click->toggle-menu"
+          >
+            <span class="avatar" aria-hidden="true">SB</span>
+            <span class="avatar-menu__name">Sarra B.</span>
+            <svg class="avatar-menu__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          <div class="avatar-menu__panel" role="menu" aria-label="Menu utilisateur">
+            <button class="avatar-menu__item" role="menuitem" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Profil
+            </button>
+            <div class="avatar-menu__divider" role="separator"></div>
+            <button class="avatar-menu__item" role="menuitem" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" x2="9" y1="12" y2="12"/>
+              </svg>
+              Déconnexion
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Ouvrir le menu"
+        aria-expanded="false"
+        data-action="click->toggle-drawer"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="4" x2="20" y1="6" y2="6"/>
+          <line x1="4" x2="20" y1="12" y2="12"/>
+          <line x1="4" x2="20" y1="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="mobile-drawer" data-open="false" id="mobile-drawer">
+      <nav aria-label="Navigation mobile">
+        <ul class="mobile-drawer__list">
+          <li>
+            <a href="#" class="mobile-drawer__item mobile-drawer__item--active" aria-current="page">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="18" height="18" x="3" y="4" rx="2"/>
+                <path d="M16 2v4M8 2v4M3 10h18"/>
+              </svg>
+              Mes RDV
+            </a>
+          </li>
+          <li>
+            <a href="#" class="mobile-drawer__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Profil
+            </a>
+          </li>
+          <li>
+            <a href="#" class="mobile-drawer__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" x2="9" y1="12" y2="12"/>
+              </svg>
+              Déconnexion
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==========================================================
+       Main
+       ========================================================== -->
+  <main id="main">
+    <div class="container">
+      <!-- En-tête de page -->
+      <section class="page-header">
+        <h1 class="page-header__title">Mes rendez-vous</h1>
+        <p class="page-header__subtitle">
+          Retrouvez vos rendez-vous à venir et l'historique de vos consultations.
+        </p>
+      </section>
+
+      <!-- ==========================================================
+           Section À venir
+           ========================================================== -->
+      <section class="section" aria-labelledby="section-upcoming">
+        <h2 class="section__title" id="section-upcoming">À venir (2)</h2>
+
+        <ul class="appointment-list">
+          <!-- RDV 1 — Dr. Aymen Ben Ali — Cabinet, Confirmé (Tunis) -->
+          <li>
+            <article class="appointment-card" aria-labelledby="appt-1-doctor">
+              <div class="appointment-card__date-mobile" aria-hidden="true">
+                <span>MER 14 MAI</span>
+              </div>
+
+              <div class="appointment-card__date" aria-hidden="true">
+                <span class="appointment-card__date-dow">MER</span>
+                <span class="appointment-card__date-day">14</span>
+                <span class="appointment-card__date-mon">MAI</span>
+              </div>
+
+              <div class="appointment-card__info">
+                <h3 class="appointment-card__doctor" id="appt-1-doctor">Dr. Aymen Ben Ali</h3>
+                <p class="appointment-card__specialty">Médecine générale</p>
+
+                <div class="appointment-card__when">
+                  <span>Mercredi 14 mai 2026 — 10:00</span>
+                  <span class="badge badge--success">Confirmé</span>
+                </div>
+
+                <p class="appointment-card__where">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  12 av. Habib Bourguiba, 1001 Tunis
+                </p>
+              </div>
+
+              <div class="appointment-card__actions">
+                <a href="#" class="btn btn--secondary">Voir la fiche du médecin</a>
+                <button
+                  class="btn btn--danger-outline"
+                  type="button"
+                  data-action="click->open-cancel-modal"
+                  aria-haspopup="dialog"
+                  aria-controls="cancel-modal"
+                >
+                  Annuler le RDV
+                </button>
+              </div>
+            </article>
+          </li>
+
+          <!-- RDV 2 — Dr. Sonia Trabelsi — Cabinet, En attente (Sousse) -->
+          <li>
+            <article class="appointment-card" aria-labelledby="appt-2-doctor">
+              <div class="appointment-card__date-mobile" aria-hidden="true">
+                <span>LUN 26 MAI</span>
+              </div>
+
+              <div class="appointment-card__date" aria-hidden="true">
+                <span class="appointment-card__date-dow">LUN</span>
+                <span class="appointment-card__date-day">26</span>
+                <span class="appointment-card__date-mon">MAI</span>
+              </div>
+
+              <div class="appointment-card__info">
+                <h3 class="appointment-card__doctor" id="appt-2-doctor">Dr. Sonia Trabelsi</h3>
+                <p class="appointment-card__specialty">Dermatologie</p>
+
+                <div class="appointment-card__when">
+                  <span>Lundi 26 mai 2026 — 16:30</span>
+                  <span class="badge badge--warning">En attente</span>
+                </div>
+
+                <p class="appointment-card__where">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  Cabinet 8 av. de la République, 4000 Sousse
+                </p>
+              </div>
+
+              <div class="appointment-card__actions">
+                <a href="#" class="btn btn--secondary">Voir la fiche du médecin</a>
+                <button
+                  class="btn btn--danger-outline"
+                  type="button"
+                  data-action="click->open-cancel-modal"
+                  aria-haspopup="dialog"
+                  aria-controls="cancel-modal"
+                >
+                  Annuler le RDV
+                </button>
+              </div>
+            </article>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ==========================================================
+           Section Historique
+           ========================================================== -->
+      <section class="section section--history" aria-labelledby="section-history">
+        <h2 class="section__title" id="section-history">Historique (1)</h2>
+
+        <ul class="appointment-list">
+          <li>
+            <article class="appointment-card appointment-card--past" aria-labelledby="appt-3-doctor">
+              <div class="appointment-card__date-mobile" aria-hidden="true">
+                <span>JEU 17 AVR</span>
+              </div>
+
+              <div class="appointment-card__date" aria-hidden="true">
+                <span class="appointment-card__date-dow">JEU</span>
+                <span class="appointment-card__date-day">17</span>
+                <span class="appointment-card__date-mon">AVR</span>
+              </div>
+
+              <div class="appointment-card__info">
+                <h3 class="appointment-card__doctor" id="appt-3-doctor">Dr. Mehdi Khaldi</h3>
+                <p class="appointment-card__specialty">Généraliste</p>
+
+                <div class="appointment-card__when">
+                  <span>Jeudi 17 avril 2026 — 09:30</span>
+                  <span class="badge badge--neutral">Terminé</span>
+                </div>
+              </div>
+            </article>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <!-- ==========================================================
+       Footer
+       ========================================================== -->
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div class="site-footer__brand">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+        </svg>
+        DocConnect
+      </div>
+      <nav class="site-footer__nav" aria-label="Liens secondaires">
+        <a class="site-footer__link" href="#">À propos</a>
+        <a class="site-footer__link" href="#">Mentions légales</a>
+        <a class="site-footer__link" href="#">CGU</a>
+        <a class="site-footer__link" href="#">Contact</a>
+      </nav>
+      <p class="site-footer__copy">&copy; 2026 DocConnect</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================
+       Chatbot flottant
+       ========================================================== -->
+  <button class="chatbot-fab" type="button" aria-label="Ouvrir le chatbot d'orientation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+    </svg>
+  </button>
+
+  <!-- ==========================================================
+       Modal d'annulation
+       ========================================================== -->
+  <div
+    class="modal"
+    id="cancel-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cancel-modal-title"
+    aria-describedby="cancel-modal-desc"
+    data-open="false"
+  >
+    <div class="modal__overlay" data-action="click->close-cancel-modal" aria-hidden="true"></div>
+    <div class="modal__dialog">
+      <button
+        class="modal__close"
+        type="button"
+        aria-label="Fermer la fenêtre"
+        data-action="click->close-cancel-modal"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" x2="6" y1="6" y2="18"/>
+          <line x1="6" x2="18" y1="6" y2="18"/>
+        </svg>
+      </button>
+
+      <h2 class="modal__title" id="cancel-modal-title">Annuler ce rendez-vous&nbsp;?</h2>
+
+      <div class="modal__recap">
+        <p class="modal__recap-doctor">Dr. Aymen Ben Ali</p>
+        <p class="modal__recap-meta">Mercredi 14 mai 2026 — 10:00</p>
+        <p class="modal__recap-meta">12 av. Habib Bourguiba, 1001 Tunis</p>
+      </div>
+
+      <p class="modal__text" id="cancel-modal-desc">
+        L'annulation libère le créneau et prévient le Dr Ben Ali par mail. Cette action est définitive.
+      </p>
+
+      <div class="modal__actions">
+        <button
+          class="btn btn--ghost"
+          type="button"
+          data-action="click->close-cancel-modal"
+        >
+          Conserver le RDV
+        </button>
+        <button
+          class="btn btn--danger-solid"
+          type="button"
+          id="cancel-confirm"
+        >
+          Annuler le RDV
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       JS — interactions minimales
+       ========================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ----------------------------------------------------------
+      // AvatarMenu dropdown
+      // ----------------------------------------------------------
+      const avatarMenu = document.querySelector('.avatar-menu');
+      if (avatarMenu) {
+        const trigger = avatarMenu.querySelector('.avatar-menu__trigger');
+        const setOpen = (open) => {
+          avatarMenu.setAttribute('data-open', open ? 'true' : 'false');
+          trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        };
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = avatarMenu.getAttribute('data-open') === 'true';
+          setOpen(!isOpen);
+        });
+        document.addEventListener('click', (e) => {
+          if (!avatarMenu.contains(e.target)) setOpen(false);
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') setOpen(false);
+        });
+      }
+
+      // ----------------------------------------------------------
+      // Mobile drawer
+      // ----------------------------------------------------------
+      const menuToggle = document.querySelector('.menu-toggle');
+      const drawer = document.getElementById('mobile-drawer');
+      if (menuToggle && drawer) {
+        menuToggle.addEventListener('click', () => {
+          const isOpen = drawer.getAttribute('data-open') === 'true';
+          drawer.setAttribute('data-open', isOpen ? 'false' : 'true');
+          menuToggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+          menuToggle.setAttribute('aria-label', isOpen ? 'Ouvrir le menu' : 'Fermer le menu');
+        });
+      }
+
+      // ----------------------------------------------------------
+      // Cancel modal — open / close / focus trap léger
+      // ----------------------------------------------------------
+      const modal = document.getElementById('cancel-modal');
+      const openButtons = document.querySelectorAll('[data-action="click->open-cancel-modal"]');
+      const closeButtons = document.querySelectorAll('[data-action="click->close-cancel-modal"]');
+      const confirmButton = document.getElementById('cancel-confirm');
+      let lastFocused = null;
+
+      const focusableSelectors = [
+        'a[href]',
+        'button:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+      ].join(',');
+
+      const openModal = () => {
+        if (!modal) return;
+        lastFocused = document.activeElement;
+        modal.setAttribute('data-open', 'true');
+        document.body.style.overflow = 'hidden';
+        // Focus auto sur "Annuler le RDV"
+        setTimeout(() => confirmButton && confirmButton.focus(), 60);
+      };
+
+      const closeModal = () => {
+        if (!modal) return;
+        modal.setAttribute('data-open', 'false');
+        document.body.style.overflow = '';
+        if (lastFocused && typeof lastFocused.focus === 'function') {
+          lastFocused.focus();
+        }
+      };
+
+      openButtons.forEach((btn) => btn.addEventListener('click', openModal));
+      closeButtons.forEach((btn) => btn.addEventListener('click', closeModal));
+
+      // Trap focus + Escape
+      document.addEventListener('keydown', (e) => {
+        if (modal && modal.getAttribute('data-open') === 'true') {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeModal();
+            return;
+          }
+          if (e.key === 'Tab') {
+            const focusables = modal.querySelectorAll(focusableSelectors);
+            if (focusables.length === 0) return;
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      });
+    }());
+  </script>
+</body>
+</html>

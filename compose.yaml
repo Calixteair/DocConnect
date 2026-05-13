@@ -1,0 +1,70 @@
+name: docconnect
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: docconnect-php
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html:cached
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      APP_DEBUG: ${APP_DEBUG:-1}
+      DATABASE_URL: "mysql://docconnect:docconnect@db:3306/docconnect?serverVersion=mariadb-11.4.2&charset=utf8mb4"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - docconnect
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: docconnect-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html:cached,ro
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+    networks:
+      - docconnect
+
+  db:
+    image: mariadb:11.4
+    container_name: docconnect-db
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: docconnect
+      MARIADB_USER: docconnect
+      MARIADB_PASSWORD: docconnect
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - docconnect
+
+  adminer:
+    image: adminer:4.8.1
+    container_name: docconnect-adminer
+    ports:
+      - "8081:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    depends_on:
+      - db
+    networks:
+      - docconnect
+
+networks:
+  docconnect:
+    driver: bridge
+
+volumes:
+  db_data:

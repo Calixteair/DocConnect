@@ -1,0 +1,1982 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Mon planning — Dr. Aymen Ben Ali — DocConnect</title>
+  <meta name="description" content="Espace médecin DocConnect : confirmer les rendez-vous en attente, consulter le planning hebdomadaire, démarrer une téléconsultation." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       Tokens
+       ============================================================ */
+    :root {
+      /* Neutres */
+      --color-bg: #FAFBFC;
+      --color-surface: #FFFFFF;
+      --color-border: #E5E7EB;
+      --color-border-strong: #D1D5DB;
+      --color-text: #1F2937;
+      --color-text-muted: #6B7280;
+      --color-text-subtle: #9CA3AF;
+
+      /* Accent */
+      --color-primary: #1E5AE8;
+      --color-primary-hover: #1947C7;
+      --color-primary-soft: #EEF3FE;
+      --color-primary-border: #C7D7FA;
+
+      /* Statuts */
+      --color-success: #059669;
+      --color-success-soft: #ECFDF5;
+      --color-warning: #B45309;
+      --color-warning-soft: #FFFBEB;
+      --color-warning-border: #FCD34D;
+      --color-danger: #DC2626;
+      --color-danger-soft: #FEF2F2;
+      --color-neutral-soft: #F3F4F6;
+      --color-overlay: rgb(15 23 42 / 0.5);
+
+      /* Espacements */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --space-16: 64px;
+
+      /* Radius */
+      --radius-card: 8px;
+      --radius-button: 6px;
+      --radius-pill: 999px;
+
+      /* Ombres */
+      --shadow-card: 0 1px 3px rgb(0 0 0 / 0.04);
+      --shadow-drawer: -8px 0 24px rgb(0 0 0 / 0.04);
+      --shadow-modal: 0 8px 24px rgb(0 0 0 / 0.08);
+      --shadow-popover: 0 8px 24px rgb(0 0 0 / 0.06);
+
+      /* Motion */
+      --motion-fast: 150ms;
+      --motion-base: 250ms;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Layout */
+      --container-max: 1200px;
+      --container-pad-mobile: 16px;
+      --container-pad-tablet: 24px;
+      --container-pad-desktop: 32px;
+      --header-height: 72px;
+    }
+
+    /* ============================================================
+       Reset et bases
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--color-text);
+      background: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    button { font-family: inherit; cursor: pointer; }
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { color: var(--color-primary-hover); }
+    h1, h2, h3, h4, p { margin: 0; }
+    ul { margin: 0; padding: 0; list-style: none; }
+
+    /* Focus visible global */
+    *:focus { outline: none; }
+    *:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: var(--space-4);
+      background: var(--color-primary);
+      color: #fff;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-button);
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      transition: top var(--motion-fast) var(--ease-standard);
+    }
+    .skip-link:focus-visible { top: var(--space-2); color: #fff; outline-color: #fff; }
+
+    /* ============================================================
+       Container
+       ============================================================ */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--container-pad-mobile);
+    }
+    @media (min-width: 768px) {
+      .container { padding: 0 var(--container-pad-tablet); }
+    }
+    @media (min-width: 1024px) {
+      .container { padding: 0 var(--container-pad-desktop); }
+    }
+
+    /* ============================================================
+       Header
+       ============================================================ */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      height: var(--header-height);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      gap: var(--space-6);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--color-text);
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+    .brand:hover { color: var(--color-text); }
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 6px;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+    }
+    .brand-mark svg { width: 16px; height: 16px; }
+
+    .header-nav {
+      display: none;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    @media (min-width: 768px) {
+      .header-nav { display: flex; }
+    }
+    .nav-link {
+      position: relative;
+      padding: var(--space-2) var(--space-3);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      border-radius: var(--radius-button);
+      transition: color var(--motion-fast) var(--ease-standard);
+    }
+    .nav-link:hover { color: var(--color-text); }
+    .nav-link.is-active {
+      color: var(--color-text);
+    }
+    .nav-link.is-active::after {
+      content: '';
+      position: absolute;
+      left: var(--space-3);
+      right: var(--space-3);
+      bottom: -12px;
+      height: 2px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+
+    /* Avatar menu */
+    .avatar-menu { position: relative; }
+    .avatar-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-pill);
+      padding: 4px 12px 4px 4px;
+      color: var(--color-text);
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  border-color var(--motion-fast) var(--ease-standard);
+    }
+    .avatar-trigger:hover { background: var(--color-neutral-soft); }
+    .avatar-trigger[aria-expanded="true"] {
+      background: var(--color-neutral-soft);
+      border-color: var(--color-border);
+    }
+    .avatar-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: inline-grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .avatar-trigger .avatar-name {
+      display: none;
+    }
+    @media (min-width: 640px) {
+      .avatar-trigger .avatar-name { display: inline; }
+    }
+    .avatar-trigger .chevron {
+      width: 16px;
+      height: 16px;
+      color: var(--color-text-muted);
+      transition: transform var(--motion-fast) var(--ease-standard);
+    }
+    .avatar-trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 220px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-popover);
+      padding: var(--space-2);
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 60;
+    }
+    .dropdown[data-open="true"] { display: flex; }
+    .dropdown-header {
+      padding: var(--space-3) var(--space-3) var(--space-2);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-2);
+    }
+    .dropdown-header .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .dropdown-header .role {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-button);
+      color: var(--color-text);
+      font-size: 14px;
+      font-weight: 500;
+      background: transparent;
+      border: 0;
+      width: 100%;
+      text-align: left;
+      transition: background-color var(--motion-fast) var(--ease-standard);
+    }
+    .dropdown-item:hover { background: var(--color-neutral-soft); }
+    .dropdown-item svg { width: 16px; height: 16px; color: var(--color-text-muted); }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: var(--space-2) 0;
+    }
+    .dropdown-item.is-danger { color: var(--color-danger); }
+    .dropdown-item.is-danger svg { color: var(--color-danger); }
+
+    /* ============================================================
+       Page
+       ============================================================ */
+    main {
+      padding: var(--space-8) 0 var(--space-16);
+    }
+    .page-header { margin-bottom: var(--space-8); }
+    .page-title {
+      font-size: 28px;
+      line-height: 36px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--color-text);
+    }
+    @media (min-width: 768px) {
+      .page-title { font-size: 32px; line-height: 40px; }
+    }
+    .page-subtitle {
+      margin-top: var(--space-2);
+      font-size: 16px;
+      line-height: 24px;
+      color: var(--color-text-muted);
+    }
+
+    /* ============================================================
+       Section "À confirmer"
+       ============================================================ */
+    .section { margin-bottom: var(--space-8); }
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+    }
+    .section-title .count-warning { color: var(--color-warning); font-weight: 600; }
+
+    .pending-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .pending-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    @media (min-width: 768px) {
+      .pending-card {
+        padding: 20px var(--space-6);
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-4);
+      }
+    }
+    .pending-info { flex: 1 1 auto; min-width: 0; }
+    .pending-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+    .pending-meta svg { width: 14px; height: 14px; color: var(--color-text-muted); flex-shrink: 0; }
+    .pending-meta .sep { color: var(--color-text-subtle); margin: 0 2px; font-weight: 400; }
+    .pending-patient {
+      margin-top: var(--space-1);
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--color-text-muted);
+    }
+    .pending-patient strong { color: var(--color-text); font-weight: 500; }
+    .pending-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      flex-shrink: 0;
+    }
+    @media (min-width: 768px) {
+      .pending-actions { flex-direction: row; }
+    }
+
+    /* ============================================================
+       Buttons
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      height: 40px;
+      padding: 0 var(--space-4);
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1;
+      border-radius: var(--radius-button);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--color-text);
+      white-space: nowrap;
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  border-color var(--motion-fast) var(--ease-standard),
+                  color var(--motion-fast) var(--ease-standard);
+      min-width: 96px;
+    }
+    .btn svg { width: 16px; height: 16px; }
+    .btn-sm { height: 32px; padding: 0 var(--space-3); font-size: 14px; min-width: 0; }
+    .btn-lg { height: 48px; padding: 0 var(--space-6); font-size: 16px; }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+    .btn-primary:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+    .btn-primary:focus-visible { outline-color: var(--color-primary); }
+
+    .btn-secondary {
+      background: var(--color-surface);
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+    .btn-secondary:hover {
+      background: #F9FAFB;
+      border-color: var(--color-text-muted);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text);
+    }
+    .btn-ghost:hover { background: var(--color-neutral-soft); }
+
+    .btn-danger {
+      background: var(--color-surface);
+      color: var(--color-danger);
+      border-color: var(--color-danger);
+    }
+    .btn-danger:hover { background: var(--color-danger-soft); }
+
+    .btn-full { width: 100%; }
+    @media (max-width: 767.98px) {
+      .pending-actions .btn { height: 48px; width: 100%; }
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      min-width: 0;
+      display: inline-grid;
+      place-items: center;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-button);
+      color: var(--color-text);
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  border-color var(--motion-fast) var(--ease-standard);
+    }
+    .icon-btn:hover { background: #F9FAFB; border-color: var(--color-text-muted); }
+    .icon-btn:disabled {
+      background: var(--color-surface);
+      border-color: var(--color-border);
+      color: var(--color-text-subtle);
+      cursor: not-allowed;
+    }
+    .icon-btn svg { width: 18px; height: 18px; }
+
+    /* ============================================================
+       Badges
+       ============================================================ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 24px;
+      padding: 0 var(--space-2);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .badge svg { width: 12px; height: 12px; }
+    .badge-info {
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+    }
+    .badge-warning {
+      background: var(--color-warning-soft);
+      color: var(--color-warning);
+    }
+
+    /* ============================================================
+       Toolbar agenda
+       ============================================================ */
+    .agenda-toolbar {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+    @media (min-width: 768px) {
+      .agenda-toolbar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+      }
+    }
+    .week-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .week-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text);
+      min-width: 0;
+    }
+    @media (max-width: 639.98px) {
+      .week-label { font-size: 14px; }
+    }
+
+    /* ============================================================
+       Day tabs (mobile)
+       ============================================================ */
+    .day-tabs {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      margin-bottom: var(--space-3);
+      padding: 4px;
+    }
+    .day-tabs::-webkit-scrollbar { display: none; }
+    @media (min-width: 768px) {
+      .day-tabs { display: none; }
+    }
+    .day-tab {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: var(--space-2) var(--space-3);
+      min-width: 60px;
+      background: transparent;
+      border: 0;
+      border-radius: var(--radius-button);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      position: relative;
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  color var(--motion-fast) var(--ease-standard);
+    }
+    .day-tab:hover { background: var(--color-neutral-soft); }
+    .day-tab .name {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: lowercase;
+    }
+    .day-tab .num {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .day-tab.is-active {
+      color: var(--color-text);
+    }
+    .day-tab.is-active::after {
+      content: '';
+      position: absolute;
+      left: var(--space-2);
+      right: var(--space-2);
+      bottom: -2px;
+      height: 2px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+    .day-tab.is-today .num::after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      margin: 4px auto 0;
+    }
+
+    /* ============================================================
+       Grille planning
+       ============================================================ */
+    .agenda-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    /* Desktop grid : 6 colonnes */
+    .agenda-grid {
+      display: none;
+      grid-template-columns: repeat(6, 1fr);
+    }
+    @media (min-width: 768px) {
+      .agenda-grid { display: grid; }
+    }
+    .agenda-grid > * {
+      border-right: 1px solid var(--color-border);
+    }
+    .agenda-grid > *:nth-child(6n) { border-right: 0; }
+
+    .day-head {
+      height: 56px;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      position: relative;
+    }
+    .day-head .name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      text-transform: lowercase;
+    }
+    .day-head .num {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text);
+      line-height: 1;
+    }
+    .day-head.is-today {
+      position: relative;
+    }
+    .day-head.is-today::after {
+      content: '';
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-primary);
+    }
+
+    /* Cellules */
+    .cell {
+      height: 64px;
+      width: 100%;
+      padding: var(--space-2) var(--space-3);
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 2px;
+      text-align: left;
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      color: var(--color-text);
+      font-family: inherit;
+      cursor: pointer;
+      transition: background-color var(--motion-fast) var(--ease-standard);
+    }
+    .cell:last-child { border-bottom: 0; }
+
+    /* Pour la grille desktop : on retire la bordure droite des cellules,
+       elle est portée par .agenda-grid > * */
+    .agenda-grid .cell { border-right: 0; }
+
+    .cell-time {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      line-height: 1.2;
+    }
+    .cell-body {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      line-height: 1.2;
+    }
+    .cell-body svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+    /* État OPEN */
+    .cell-open .cell-body { color: var(--color-text-muted); }
+    .cell-open:hover { background: var(--color-neutral-soft); }
+
+    /* État BOOKED confirmé */
+    .cell-booked {
+      background: var(--color-primary-soft);
+      box-shadow: inset 0 0 0 1px var(--color-primary-border);
+      position: relative;
+    }
+    .cell-booked .cell-time { color: var(--color-primary); }
+    .cell-booked .cell-body { color: var(--color-primary); font-size: 14px; font-weight: 600; }
+    .cell-booked:hover { background: #E2EBFD; }
+
+    /* État BOOKED pending */
+    .cell-pending {
+      background: var(--color-warning-soft);
+      box-shadow: inset 0 0 0 1px var(--color-warning-border);
+    }
+    .cell-pending .cell-time { color: var(--color-warning); }
+    .cell-pending .cell-body { color: var(--color-warning); font-size: 14px; font-weight: 600; }
+    .cell-pending:hover { background: #FEF3CD; }
+
+    /* État BLOCKED */
+    .cell-blocked {
+      background: var(--color-neutral-soft);
+      box-shadow: inset 0 0 0 1px var(--color-border);
+      cursor: not-allowed;
+      position: relative;
+    }
+    .cell-blocked::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border: 1px dashed var(--color-border-strong);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+    .cell-blocked .cell-body {
+      font-style: italic;
+      color: var(--color-text-muted);
+    }
+    .cell-blocked:hover { background: var(--color-neutral-soft); }
+
+    /* Cellule vide (créneau non créé) — pas de hover, non cliquable */
+    .cell-empty {
+      cursor: default;
+      background: var(--color-surface);
+    }
+    .cell-empty .cell-time,
+    .cell-empty .cell-body {
+      color: var(--color-text-subtle);
+      opacity: 0.5;
+    }
+    .cell-empty:hover { background: var(--color-surface); }
+
+    /* Visio inside booked */
+    .cell-visio-icon { color: inherit; }
+
+    /* ============================================================
+       Vue mobile (jour unique)
+       ============================================================ */
+    .agenda-day-mobile {
+      display: block;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .agenda-day-mobile:last-child { border-bottom: 0; }
+    @media (min-width: 768px) {
+      .agenda-day-mobile { display: none; }
+    }
+    .day-head-mobile {
+      height: 48px;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+    }
+    .day-head-mobile .label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .day-head-mobile .label .dim {
+      color: var(--color-text-muted);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .day-head-mobile .today-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--color-primary);
+      font-weight: 500;
+    }
+    .day-head-mobile .today-dot::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-primary);
+    }
+
+    .mobile-cells .cell {
+      height: 56px;
+      padding: var(--space-2) var(--space-4);
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .mobile-cells .cell-time { min-width: 48px; }
+    .mobile-cells .cell-body { font-size: 14px; }
+
+    /* ============================================================
+       Drawer
+       ============================================================ */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--color-overlay);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--motion-base) var(--ease-standard);
+      z-index: 90;
+    }
+    .drawer-overlay[data-open="true"] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 420px;
+      max-width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      background: var(--color-surface);
+      border-left: 1px solid var(--color-border);
+      box-shadow: var(--shadow-drawer);
+      transform: translateX(100%);
+      transition: transform var(--motion-base) var(--ease-standard);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer[data-open="true"] { transform: translateX(0); }
+
+    @media (max-width: 767.98px) {
+      .drawer {
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 92vh;
+        height: 92dvh;
+        max-width: none;
+        border-left: 0;
+        border-top: 1px solid var(--color-border);
+        border-radius: 16px 16px 0 0;
+        transform: translateY(100%);
+        box-shadow: 0 -8px 24px rgb(0 0 0 / 0.06);
+      }
+      .drawer[data-open="true"] { transform: translateY(0); }
+    }
+
+    .drawer-handle {
+      display: none;
+      width: 40px;
+      height: 4px;
+      background: var(--color-border-strong);
+      border-radius: 999px;
+      margin: 8px auto 0;
+    }
+    @media (max-width: 767.98px) {
+      .drawer-handle { display: block; }
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding: var(--space-6);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .drawer-title {
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .drawer-close {
+      width: 36px;
+      height: 36px;
+      display: inline-grid;
+      place-items: center;
+      border: 0;
+      background: transparent;
+      border-radius: var(--radius-button);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: background-color var(--motion-fast) var(--ease-standard);
+    }
+    .drawer-close:hover { background: var(--color-neutral-soft); color: var(--color-text); }
+    .drawer-close svg { width: 20px; height: 20px; }
+
+    .drawer-body {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+    .drawer-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-6);
+      border-top: 1px solid var(--color-border);
+    }
+    @media (max-width: 639.98px) {
+      .drawer-footer { flex-direction: column-reverse; }
+      .drawer-footer .btn { width: 100%; height: 48px; }
+    }
+
+    /* Drawer content blocks */
+    .patient-block {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .patient-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: inline-grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .patient-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .patient-name {
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .patient-meta {
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .patient-meta svg { width: 14px; height: 14px; }
+
+    .definition-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .definition-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+    .definition-row .icon {
+      width: 20px;
+      height: 20px;
+      color: var(--color-text-muted);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .definition-row .icon svg { width: 100%; height: 100%; }
+    .definition-row .content {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .definition-row .label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 2px;
+    }
+    .definition-row .value {
+      font-size: 15px;
+      line-height: 22px;
+      color: var(--color-text);
+    }
+    .definition-row .value .badge { margin-left: 6px; vertical-align: middle; }
+
+    .motif-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      padding: var(--space-4);
+    }
+    .motif-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+    }
+    .motif-text {
+      font-size: 15px;
+      line-height: 22px;
+      color: var(--color-text);
+    }
+
+    /* ============================================================
+       Modal
+       ============================================================ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--color-overlay);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--motion-base) var(--ease-standard);
+      z-index: 110;
+      display: grid;
+      place-items: center;
+      padding: var(--space-4);
+    }
+    .modal-overlay[data-open="true"] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    @media (max-width: 767.98px) {
+      .modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+      }
+    }
+
+    .modal {
+      width: 480px;
+      max-width: 100%;
+      background: var(--color-surface);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-modal);
+      transform: translateY(8px);
+      opacity: 0;
+      transition: transform var(--motion-base) var(--ease-standard),
+                  opacity var(--motion-base) var(--ease-standard);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 32px);
+      overflow: hidden;
+    }
+    .modal-overlay[data-open="true"] .modal {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    @media (max-width: 767.98px) {
+      .modal {
+        width: 100%;
+        max-height: 92vh;
+        max-height: 92dvh;
+        border-radius: 16px 16px 0 0;
+        transform: translateY(100%);
+      }
+      .modal-overlay[data-open="true"] .modal { transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding: var(--space-6) var(--space-6) var(--space-3);
+    }
+    .modal-handle {
+      display: none;
+      width: 40px;
+      height: 4px;
+      background: var(--color-border-strong);
+      border-radius: 999px;
+      margin: 8px auto 0;
+    }
+    @media (max-width: 767.98px) {
+      .modal-handle { display: block; }
+    }
+    .modal-title {
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .modal-body {
+      padding: 0 var(--space-6) var(--space-6);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .modal-footer {
+      padding: var(--space-4) var(--space-6);
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+    }
+    @media (max-width: 639.98px) {
+      .modal-footer { flex-direction: column-reverse; }
+      .modal-footer .btn { width: 100%; height: 48px; }
+    }
+
+    /* ============================================================
+       Form fields
+       ============================================================ */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+    .field-label {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+    .field-input,
+    .field-select {
+      height: 40px;
+      padding: 0 var(--space-3);
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--color-text);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-button);
+      transition: border-color var(--motion-fast) var(--ease-standard),
+                  box-shadow var(--motion-fast) var(--ease-standard);
+      width: 100%;
+    }
+    .field-input::placeholder { color: var(--color-text-subtle); }
+    .field-input:hover,
+    .field-select:hover { border-color: var(--color-text-muted); }
+    .field-input:focus,
+    .field-select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgb(30 90 232 / 0.15);
+    }
+    .field-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    /* Segmented control */
+    .segmented {
+      display: inline-flex;
+      padding: 4px;
+      background: var(--color-neutral-soft);
+      border-radius: var(--radius-button);
+      width: 100%;
+    }
+    .segmented input { position: absolute; opacity: 0; pointer-events: none; }
+    .segmented label {
+      flex: 1 1 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 var(--space-3);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color var(--motion-fast) var(--ease-standard),
+                  color var(--motion-fast) var(--ease-standard);
+    }
+    .segmented label:hover { color: var(--color-text); }
+    .segmented label svg { width: 14px; height: 14px; }
+    .segmented input:checked + label {
+      background: var(--color-surface);
+      color: var(--color-text);
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    }
+    .segmented input:focus-visible + label {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    /* ============================================================
+       Footer
+       ============================================================ */
+    .site-footer {
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface);
+      padding: var(--space-6) 0;
+      margin-top: var(--space-16);
+    }
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-4);
+    }
+    @media (min-width: 768px) {
+      .footer-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4) var(--space-6);
+    }
+    .footer-link {
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+    .footer-link:hover { color: var(--color-text); }
+    .footer-copy {
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    /* Visually hidden utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Aller au contenu principal</a>
+
+  <!-- ====================================================
+       Header
+       ==================================================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="brand" aria-label="DocConnect — accueil">
+        <span class="brand-mark" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M12 22v-8"/><path d="M4 12H2"/><path d="M22 12h-2"/><circle cx="12" cy="12" r="3"/></svg>
+        </span>
+        DocConnect
+      </a>
+
+      <nav class="header-nav" aria-label="Navigation principale">
+        <a href="#" class="nav-link is-active" aria-current="page">Planning</a>
+      </nav>
+
+      <div class="avatar-menu" data-avatar-menu>
+        <button type="button" class="avatar-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="avatar-dropdown" data-avatar-trigger>
+          <span class="avatar-circle" aria-hidden="true">AB</span>
+          <span class="avatar-name">Dr. Ben Ali</span>
+          <svg class="chevron" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown" id="avatar-dropdown" role="menu" data-avatar-dropdown aria-hidden="true">
+          <div class="dropdown-header">
+            <div class="name">Dr. Aymen Ben Ali</div>
+            <div class="role">Médecine générale</div>
+          </div>
+          <button type="button" class="dropdown-item" role="menuitem">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Mon profil
+          </button>
+          <div class="dropdown-divider" role="separator"></div>
+          <button type="button" class="dropdown-item is-danger" role="menuitem">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================
+       Main
+       ==================================================== -->
+  <main id="main">
+    <div class="container">
+      <!-- En-tête page -->
+      <div class="page-header">
+        <h1 class="page-title">Mon planning</h1>
+        <p class="page-subtitle">Dr. Aymen Ben Ali — Médecine générale</p>
+      </div>
+
+      <!-- Section À confirmer -->
+      <section class="section" aria-labelledby="pending-title">
+        <h2 class="section-title" id="pending-title">
+          À confirmer <span class="count-warning" aria-label="2 demandes">(2)</span>
+        </h2>
+
+        <div class="pending-list">
+          <!-- Card 1 -->
+          <article class="pending-card">
+            <div class="pending-info">
+              <div class="pending-meta">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>Mer. 14 mai <span class="sep">—</span> 10:00 <span class="sep">—</span> Cabinet</span>
+              </div>
+              <p class="pending-patient">
+                <strong>Yasmine Jendoubi</strong> — motif : «&nbsp;renouvellement d'ordonnance&nbsp;»
+              </p>
+            </div>
+            <div class="pending-actions">
+              <button type="button" class="btn btn-primary">Confirmer</button>
+              <button type="button" class="btn btn-danger">Refuser</button>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="pending-card">
+            <div class="pending-info">
+              <div class="pending-meta">
+                <span class="badge badge-info" aria-label="Téléconsultation">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  Visio
+                </span>
+                <span>Ven. 16 mai <span class="sep">—</span> 14:30 <span class="sep">—</span> Visio</span>
+              </div>
+              <p class="pending-patient">
+                <strong>Karim Mejri</strong> — motif : «&nbsp;douleur au genou&nbsp;»
+              </p>
+            </div>
+            <div class="pending-actions">
+              <button type="button" class="btn btn-primary">Confirmer</button>
+              <button type="button" class="btn btn-danger">Refuser</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Toolbar agenda -->
+      <section class="section" aria-labelledby="agenda-title">
+        <h2 class="sr-only" id="agenda-title">Planning de la semaine</h2>
+
+        <div class="agenda-toolbar">
+          <div class="week-nav">
+            <button type="button" class="icon-btn" aria-label="Semaine précédente">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="week-label">Semaine du 12 au 17 mai 2026</span>
+            <button type="button" class="icon-btn" aria-label="Semaine suivante">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <button type="button" class="btn btn-primary" data-open-add-slot>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Ajouter un créneau
+          </button>
+        </div>
+
+        <!-- Day tabs (mobile only) -->
+        <div class="day-tabs" role="tablist" aria-label="Sélection du jour" data-day-tabs>
+          <button type="button" class="day-tab" role="tab" aria-selected="false" data-day="lun">
+            <span class="name">lun.</span><span class="num">12</span>
+          </button>
+          <button type="button" class="day-tab is-active is-today" role="tab" aria-selected="true" aria-current="date" data-day="mar">
+            <span class="name">mar.</span><span class="num">13</span>
+          </button>
+          <button type="button" class="day-tab" role="tab" aria-selected="false" data-day="mer">
+            <span class="name">mer.</span><span class="num">14</span>
+          </button>
+          <button type="button" class="day-tab" role="tab" aria-selected="false" data-day="jeu">
+            <span class="name">jeu.</span><span class="num">15</span>
+          </button>
+          <button type="button" class="day-tab" role="tab" aria-selected="false" data-day="ven">
+            <span class="name">ven.</span><span class="num">16</span>
+          </button>
+          <button type="button" class="day-tab" role="tab" aria-selected="false" data-day="sam">
+            <span class="name">sam.</span><span class="num">17</span>
+          </button>
+        </div>
+
+        <!-- Grille planning -->
+        <div class="agenda-card" aria-label="Planning semaine du 12 au 17 mai 2026">
+          <!-- ============ Desktop grid ============ -->
+          <div class="agenda-grid" role="grid">
+            <!-- En-tête colonnes -->
+            <div class="day-head" role="columnheader"><span class="name">lun.</span><span class="num">12</span></div>
+            <div class="day-head is-today" role="columnheader"><span class="name">mar.</span><span class="num">13</span></div>
+            <div class="day-head" role="columnheader"><span class="name">mer.</span><span class="num">14</span></div>
+            <div class="day-head" role="columnheader"><span class="name">jeu.</span><span class="num">15</span></div>
+            <div class="day-head" role="columnheader"><span class="name">ven.</span><span class="num">16</span></div>
+            <div class="day-head" role="columnheader"><span class="name">sam.</span><span class="num">17</span></div>
+
+            <!-- Ligne 09:00 -->
+            <button type="button" class="cell cell-open" aria-label="Lundi 12 mai, 09:00, créneau libre">
+              <span class="cell-time">09:00</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-booked" aria-label="Mardi 13 mai 09:00, rendez-vous avec Tarek Nasri, mode cabinet" data-open-drawer data-name="Tarek Nasri" data-time="09:00" data-day="Mardi 13 mai" data-mode="cabinet">
+              <span class="cell-time">09:00</span><span class="cell-body">A.M.</span>
+            </button>
+            <button type="button" class="cell cell-blocked" aria-label="Mercredi 14 mai 09:00, créneau bloqué" disabled>
+              <span class="cell-time">09:00</span><span class="cell-body">Bloqué</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Jeudi 15 mai, 09:00, créneau libre">
+              <span class="cell-time">09:00</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-booked" aria-label="Vendredi 16 mai 09:00, rendez-vous avec Yasmine Jendoubi, mode cabinet" data-open-drawer data-name="Yasmine Jendoubi" data-time="09:00" data-day="Vendredi 16 mai" data-mode="cabinet">
+              <span class="cell-time">09:00</span><span class="cell-body">C.D.</span>
+            </button>
+            <div class="cell cell-empty" aria-hidden="true"></div>
+
+            <!-- Ligne 09:30 -->
+            <button type="button" class="cell cell-booked" aria-label="Lundi 12 mai 09:30, rendez-vous avec Houda Belhaj, mode cabinet" data-open-drawer data-name="Houda Belhaj" data-time="09:30" data-day="Lundi 12 mai" data-mode="cabinet">
+              <span class="cell-time">09:30</span><span class="cell-body">C.D.</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Mardi 13 mai, 09:30, créneau libre">
+              <span class="cell-time">09:30</span><span class="cell-body">Libre</span>
+            </button>
+            <div class="cell cell-empty" aria-hidden="true"></div>
+            <button type="button" class="cell cell-booked" aria-label="Jeudi 15 mai 09:30, rendez-vous avec Amal Gharbi, mode cabinet" data-open-drawer data-name="Amal Gharbi" data-time="09:30" data-day="Jeudi 15 mai" data-mode="cabinet">
+              <span class="cell-time">09:30</span><span class="cell-body">S.L.</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Vendredi 16 mai, 09:30, créneau libre">
+              <span class="cell-time">09:30</span><span class="cell-body">Libre</span>
+            </button>
+            <div class="cell cell-empty" aria-hidden="true"></div>
+
+            <!-- Ligne 10:00 -->
+            <button type="button" class="cell cell-open" aria-label="Lundi 12 mai, 10:00, créneau libre">
+              <span class="cell-time">10:00</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-booked" aria-label="Mardi 13 mai 10:00, téléconsultation avec Walid Sassi" data-open-drawer data-name="Walid Sassi" data-time="10:00" data-day="Mardi 13 mai" data-mode="visio">
+              <span class="cell-time">10:00</span>
+              <span class="cell-body">
+                <svg class="cell-visio-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                J.F.
+              </span>
+            </button>
+            <button type="button" class="cell cell-pending" aria-label="Mercredi 14 mai 10:00, rendez-vous en attente avec Yasmine Jendoubi, mode cabinet" data-open-drawer data-name="Yasmine Jendoubi" data-time="10:00" data-day="Mercredi 14 mai" data-mode="cabinet" data-status="pending">
+              <span class="cell-time">10:00</span><span class="cell-body">C.D.</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Jeudi 15 mai, 10:00, créneau libre">
+              <span class="cell-time">10:00</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-blocked" aria-label="Vendredi 16 mai 10:00, créneau bloqué" disabled>
+              <span class="cell-time">10:00</span><span class="cell-body">Bloqué</span>
+            </button>
+            <div class="cell cell-empty" aria-hidden="true"></div>
+
+            <!-- Ligne 10:30 -->
+            <button type="button" class="cell cell-booked" aria-label="Lundi 12 mai 10:30, rendez-vous avec Nour Selmi, mode cabinet" data-open-drawer data-name="Nour Selmi" data-time="10:30" data-day="Lundi 12 mai" data-mode="cabinet">
+              <span class="cell-time">10:30</span><span class="cell-body">M.P.</span>
+            </button>
+            <button type="button" class="cell cell-booked" aria-label="Mardi 13 mai 10:30, rendez-vous avec Rim Toumi, mode cabinet" data-open-drawer data-name="Rim Toumi" data-time="10:30" data-day="Mardi 13 mai" data-mode="cabinet">
+              <span class="cell-time">10:30</span><span class="cell-body">É.R.</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Mercredi 14 mai, 10:30, créneau libre">
+              <span class="cell-time">10:30</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Jeudi 15 mai, 10:30, créneau libre">
+              <span class="cell-time">10:30</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-booked" aria-label="Vendredi 16 mai 10:30, rendez-vous avec Omar Bouzid, mode cabinet" data-open-drawer data-name="Omar Bouzid" data-time="10:30" data-day="Vendredi 16 mai" data-mode="cabinet">
+              <span class="cell-time">10:30</span><span class="cell-body">T.R.</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Samedi 17 mai, 10:30, créneau libre">
+              <span class="cell-time">10:30</span><span class="cell-body">Libre</span>
+            </button>
+
+            <!-- Ligne 11:00 -->
+            <button type="button" class="cell cell-open" aria-label="Lundi 12 mai, 11:00, créneau libre">
+              <span class="cell-time">11:00</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-booked" aria-label="Mardi 13 mai 11:00, rendez-vous avec Mariem Ayari, mode cabinet" data-open-drawer data-name="Mariem Ayari" data-time="11:00" data-day="Mardi 13 mai" data-mode="cabinet">
+              <span class="cell-time">11:00</span><span class="cell-body">H.G.</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Mercredi 14 mai, 11:00, créneau libre">
+              <span class="cell-time">11:00</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-blocked" aria-label="Jeudi 15 mai 11:00, créneau bloqué" disabled>
+              <span class="cell-time">11:00</span><span class="cell-body">Bloqué</span>
+            </button>
+            <button type="button" class="cell cell-pending" aria-label="Vendredi 16 mai 14:30 — visio en attente avec Karim Mejri. Affichée sur la ligne 11:00 par souci de visibilité." data-open-drawer data-name="Karim Mejri" data-time="14:30" data-day="Vendredi 16 mai" data-mode="visio" data-status="pending">
+              <span class="cell-time">14:30</span>
+              <span class="cell-body">
+                <svg class="cell-visio-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                L.B.
+              </span>
+            </button>
+            <div class="cell cell-empty" aria-hidden="true"></div>
+
+            <!-- Ligne 14:00 -->
+            <button type="button" class="cell cell-booked" aria-label="Lundi 12 mai 14:00, rendez-vous avec Nadia Hammami, mode cabinet" data-open-drawer data-name="Nadia Hammami" data-time="14:00" data-day="Lundi 12 mai" data-mode="cabinet">
+              <span class="cell-time">14:00</span><span class="cell-body">P.M.</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Mardi 13 mai, 14:00, créneau libre">
+              <span class="cell-time">14:00</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-booked" aria-label="Mercredi 14 mai 14:00, rendez-vous avec Hatem Riahi, mode cabinet" data-open-drawer data-name="Hatem Riahi" data-time="14:00" data-day="Mercredi 14 mai" data-mode="cabinet">
+              <span class="cell-time">14:00</span><span class="cell-body">N.L.</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Jeudi 15 mai, 14:00, créneau libre">
+              <span class="cell-time">14:00</span><span class="cell-body">Libre</span>
+            </button>
+            <button type="button" class="cell cell-open" aria-label="Vendredi 16 mai, 14:00, créneau libre">
+              <span class="cell-time">14:00</span><span class="cell-body">Libre</span>
+            </button>
+            <div class="cell cell-empty" aria-hidden="true"></div>
+          </div>
+
+          <!-- ============ Mobile view (jour unique : mardi 13) ============ -->
+          <div class="agenda-day-mobile" data-day-pane="mar">
+            <div class="day-head-mobile">
+              <div class="label">Mardi <span class="dim">13 mai</span></div>
+              <span class="today-dot">Aujourd'hui</span>
+            </div>
+            <div class="mobile-cells">
+              <button type="button" class="cell cell-booked" aria-label="Mardi 13 mai 09:00, rendez-vous avec Tarek Nasri, mode cabinet" data-open-drawer data-name="Tarek Nasri" data-time="09:00" data-day="Mardi 13 mai" data-mode="cabinet">
+                <span class="cell-time">09:00</span><span class="cell-body">A.M.</span>
+              </button>
+              <button type="button" class="cell cell-open" aria-label="Mardi 13 mai, 09:30, créneau libre">
+                <span class="cell-time">09:30</span><span class="cell-body">Libre</span>
+              </button>
+              <button type="button" class="cell cell-booked" aria-label="Mardi 13 mai 10:00, téléconsultation avec Walid Sassi" data-open-drawer data-name="Walid Sassi" data-time="10:00" data-day="Mardi 13 mai" data-mode="visio">
+                <span class="cell-time">10:00</span>
+                <span class="cell-body">
+                  <svg class="cell-visio-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  J.F.
+                </span>
+              </button>
+              <button type="button" class="cell cell-booked" aria-label="Mardi 13 mai 10:30, rendez-vous avec Rim Toumi, mode cabinet" data-open-drawer data-name="Rim Toumi" data-time="10:30" data-day="Mardi 13 mai" data-mode="cabinet">
+                <span class="cell-time">10:30</span><span class="cell-body">É.R.</span>
+              </button>
+              <button type="button" class="cell cell-booked" aria-label="Mardi 13 mai 11:00, rendez-vous avec Mariem Ayari, mode cabinet" data-open-drawer data-name="Mariem Ayari" data-time="11:00" data-day="Mardi 13 mai" data-mode="cabinet">
+                <span class="cell-time">11:00</span><span class="cell-body">H.G.</span>
+              </button>
+              <button type="button" class="cell cell-open" aria-label="Mardi 13 mai, 14:00, créneau libre">
+                <span class="cell-time">14:00</span><span class="cell-body">Libre</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ====================================================
+       Footer
+       ==================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-links">
+        <a href="#" class="footer-link">À propos</a>
+        <a href="#" class="footer-link">Mentions légales</a>
+        <a href="#" class="footer-link">CGU</a>
+        <a href="#" class="footer-link">Contact</a>
+      </div>
+      <p class="footer-copy">© 2026 DocConnect</p>
+    </div>
+  </footer>
+
+  <!-- ====================================================
+       Drawer détail RDV
+       ==================================================== -->
+  <div class="drawer-overlay" data-drawer-overlay aria-hidden="true"></div>
+  <aside
+    class="drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drawer-title"
+    aria-hidden="true"
+    data-drawer
+    tabindex="-1"
+  >
+    <div class="drawer-handle" aria-hidden="true"></div>
+    <header class="drawer-header">
+      <h3 class="drawer-title" id="drawer-title">Rendez-vous</h3>
+      <button type="button" class="drawer-close" aria-label="Fermer" data-drawer-close>
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+
+    <div class="drawer-body">
+      <!-- Patient -->
+      <section class="patient-block" aria-label="Patient">
+        <div class="patient-avatar" aria-hidden="true" data-drawer-initials>J.F.</div>
+        <div class="patient-info">
+          <p class="patient-name" data-drawer-name>Walid Sassi</p>
+          <p class="patient-meta">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>06 12 34 56 78</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- Détails RDV -->
+      <section class="definition-list" aria-label="Détails du rendez-vous">
+        <div class="definition-row">
+          <span class="icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </span>
+          <div class="content">
+            <p class="label">date</p>
+            <p class="value" data-drawer-date>Mardi 13 mai 2026 — 10:00</p>
+          </div>
+        </div>
+        <div class="definition-row">
+          <span class="icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </span>
+          <div class="content">
+            <p class="label">mode</p>
+            <p class="value">
+              <span data-drawer-mode>Téléconsultation</span>
+              <span class="badge badge-info" data-drawer-badge>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                Visio
+              </span>
+            </p>
+          </div>
+        </div>
+        <div class="definition-row" data-drawer-address-row>
+          <span class="icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          <div class="content">
+            <p class="label">lien</p>
+            <p class="value" data-drawer-address>Visio générée à l'ouverture du RDV.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Motif -->
+      <section class="motif-card" aria-label="Motif de consultation">
+        <p class="motif-label">motif renseigné</p>
+        <p class="motif-text" data-drawer-motif>Toux persistante depuis 10 jours, sans fièvre. Souhaite éviter de se déplacer.</p>
+      </section>
+    </div>
+
+    <footer class="drawer-footer">
+      <button type="button" class="btn btn-danger" data-drawer-cancel>Annuler ce RDV</button>
+      <button type="button" class="btn btn-primary" data-drawer-visio>
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        Démarrer la visio
+      </button>
+    </footer>
+  </aside>
+
+  <!-- ====================================================
+       Modal Ajouter un créneau
+       ==================================================== -->
+  <div
+    class="modal-overlay"
+    data-modal-overlay
+    role="presentation"
+    aria-hidden="true"
+  >
+    <div
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="add-slot-title"
+      data-modal
+    >
+      <div class="modal-handle" aria-hidden="true"></div>
+      <header class="modal-header">
+        <h3 class="modal-title" id="add-slot-title">Ajouter un créneau</h3>
+        <button type="button" class="drawer-close" aria-label="Fermer" data-modal-close>
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </header>
+
+      <form class="modal-body" onsubmit="event.preventDefault();">
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="slot-date">Date</label>
+            <input class="field-input" type="date" id="slot-date" value="2026-05-13" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="slot-time">Heure de début</label>
+            <input class="field-input" type="time" id="slot-time" value="09:00" step="900" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="slot-duration">Durée</label>
+          <select class="field-select" id="slot-duration">
+            <option value="15">15 minutes</option>
+            <option value="20" selected>20 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="45">45 minutes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <span class="field-label" id="slot-mode-label">Mode</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="slot-mode-label">
+            <input type="radio" name="slot-mode" id="mode-cabinet" value="cabinet" checked />
+            <label for="mode-cabinet">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Cabinet
+            </label>
+            <input type="radio" name="slot-mode" id="mode-visio" value="visio" />
+            <label for="mode-visio">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              Visio
+            </label>
+          </div>
+        </div>
+      </form>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-ghost" data-modal-cancel>Annuler</button>
+        <button type="button" class="btn btn-primary">Créer le créneau</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       JS — interactions
+       ==================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ------------------------------------------------------------
+      // AvatarMenu : toggle dropdown
+      // ------------------------------------------------------------
+      const avatarMenu = document.querySelector('[data-avatar-menu]');
+      if (avatarMenu) {
+        const trigger = avatarMenu.querySelector('[data-avatar-trigger]');
+        const dropdown = avatarMenu.querySelector('[data-avatar-dropdown]');
+
+        const setOpen = (open) => {
+          trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+          dropdown.setAttribute('aria-hidden', open ? 'false' : 'true');
+          dropdown.dataset.open = open ? 'true' : 'false';
+        };
+
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const open = trigger.getAttribute('aria-expanded') === 'true';
+          setOpen(!open);
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!avatarMenu.contains(e.target)) setOpen(false);
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') setOpen(false);
+        });
+      }
+
+      // ------------------------------------------------------------
+      // Day tabs (mobile) — switch active day
+      // ------------------------------------------------------------
+      const tabs = document.querySelectorAll('[data-day-tabs] .day-tab');
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          tabs.forEach((t) => {
+            t.classList.remove('is-active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('is-active');
+          tab.setAttribute('aria-selected', 'true');
+          // Demo : on ne switch pas la pane affichée (statique).
+        });
+      });
+
+      // ------------------------------------------------------------
+      // Drawer
+      // ------------------------------------------------------------
+      const drawer = document.querySelector('[data-drawer]');
+      const drawerOverlay = document.querySelector('[data-drawer-overlay]');
+      let lastFocusedBeforeDrawer = null;
+
+      const openDrawer = (cell) => {
+        if (!drawer) return;
+        lastFocusedBeforeDrawer = document.activeElement;
+
+        if (cell) hydrateDrawer(cell);
+
+        drawer.dataset.open = 'true';
+        drawer.setAttribute('aria-hidden', 'false');
+        drawerOverlay.dataset.open = 'true';
+        drawerOverlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => drawer.focus(), 50);
+      };
+
+      const closeDrawer = () => {
+        if (!drawer) return;
+        drawer.dataset.open = 'false';
+        drawer.setAttribute('aria-hidden', 'true');
+        drawerOverlay.dataset.open = 'false';
+        drawerOverlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (lastFocusedBeforeDrawer && typeof lastFocusedBeforeDrawer.focus === 'function') {
+          lastFocusedBeforeDrawer.focus();
+        }
+      };
+
+      const initialsFrom = (name) =>
+        name.split(/\s+/).filter(Boolean).slice(0, 2)
+          .map((s) => s.charAt(0).toUpperCase() + '.')
+          .join('');
+
+      const hydrateDrawer = (cell) => {
+        const name = cell.dataset.name || 'Patient';
+        const time = cell.dataset.time || '';
+        const day = cell.dataset.day || '';
+        const mode = cell.dataset.mode || 'cabinet';
+        const status = cell.dataset.status || 'confirmed';
+
+        const initialsEl = drawer.querySelector('[data-drawer-initials]');
+        const nameEl = drawer.querySelector('[data-drawer-name]');
+        const dateEl = drawer.querySelector('[data-drawer-date]');
+        const modeEl = drawer.querySelector('[data-drawer-mode]');
+        const badgeEl = drawer.querySelector('[data-drawer-badge]');
+        const addrEl = drawer.querySelector('[data-drawer-address]');
+        const motifEl = drawer.querySelector('[data-drawer-motif]');
+        const visioBtn = drawer.querySelector('[data-drawer-visio]');
+
+        if (initialsEl) initialsEl.textContent = initialsFrom(name);
+        if (nameEl) nameEl.textContent = name;
+        if (dateEl) dateEl.textContent = day + ' 2026 — ' + time;
+
+        const isVisio = mode === 'visio';
+        if (modeEl) modeEl.textContent = isVisio ? 'Téléconsultation' : 'Cabinet';
+
+        if (badgeEl) {
+          badgeEl.style.display = isVisio ? 'inline-flex' : 'none';
+        }
+        if (addrEl) {
+          addrEl.textContent = isVisio
+            ? 'Visio générée à l\u2019ouverture du RDV.'
+            : '12 av. Habib Bourguiba, 1001 Tunis';
+        }
+        if (motifEl) {
+          // Quelques motifs en fonction du patient pour la démo
+          const motifs = {
+            'Yasmine Jendoubi': 'Renouvellement d\u2019ordonnance pour traitement chronique.',
+            'Karim Mejri': 'Douleur au genou droit apparue après une séance de course.',
+            'Walid Sassi': 'Toux persistante depuis 10 jours, sans fièvre.',
+            'Tarek Nasri': 'Bilan annuel de santé.',
+            'Houda Belhaj': 'Suivi tension artérielle.',
+            'Amal Gharbi': 'Consultation post-opératoire.',
+            'Nour Selmi': 'Renouvellement traitement thyroïde.',
+            'Rim Toumi': 'Maux de tête fréquents depuis 3 semaines.',
+            'Mariem Ayari': 'Vaccination rappel.',
+            'Omar Bouzid': 'Eczéma persistant sur les avant-bras.',
+            'Nadia Hammami': 'Contrôle après prise de sang.',
+            'Hatem Riahi': 'Otite récidivante.',
+          };
+          motifEl.textContent = motifs[name] || 'Motif libre saisi par le patient.';
+        }
+
+        if (visioBtn) {
+          visioBtn.style.display = isVisio ? 'inline-flex' : 'none';
+        }
+      };
+
+      document.querySelectorAll('[data-open-drawer]').forEach((cell) => {
+        cell.addEventListener('click', () => openDrawer(cell));
+      });
+
+      document.querySelectorAll('[data-drawer-close]').forEach((b) =>
+        b.addEventListener('click', closeDrawer)
+      );
+      if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+
+      // ------------------------------------------------------------
+      // Modal AddSlot
+      // ------------------------------------------------------------
+      const modalOverlay = document.querySelector('[data-modal-overlay]');
+      const modal = document.querySelector('[data-modal]');
+      let lastFocusedBeforeModal = null;
+
+      const openModal = () => {
+        if (!modal) return;
+        lastFocusedBeforeModal = document.activeElement;
+        modalOverlay.dataset.open = 'true';
+        modalOverlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        const firstInput = modal.querySelector('input, select, button');
+        if (firstInput) setTimeout(() => firstInput.focus(), 50);
+      };
+
+      const closeModal = () => {
+        if (!modal) return;
+        modalOverlay.dataset.open = 'false';
+        modalOverlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+          lastFocusedBeforeModal.focus();
+        }
+      };
+
+      document.querySelectorAll('[data-open-add-slot]').forEach((b) =>
+        b.addEventListener('click', openModal)
+      );
+      document.querySelectorAll('[data-modal-close], [data-modal-cancel]').forEach((b) =>
+        b.addEventListener('click', closeModal)
+      );
+      if (modalOverlay) {
+        modalOverlay.addEventListener('click', (e) => {
+          if (e.target === modalOverlay) closeModal();
+        });
+      }
+
+      // ------------------------------------------------------------
+      // Escape closes any open layer
+      // ------------------------------------------------------------
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (drawer && drawer.dataset.open === 'true') closeDrawer();
+          if (modalOverlay && modalOverlay.dataset.open === 'true') closeModal();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
