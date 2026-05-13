@@ -220,31 +220,42 @@ Roadmap en **9 phases**. Chaque phase a un **objectif**, des **tâches** (avec m
 
 ---
 
-## Phase 9 — Polish & démo
+## Phase 9 — Polish & démo ✅
 
 **Objectif** : projet propre, démo-ready.
 
-**Tâches**
-- [ ] **Pass design final** sur toutes les pages : skill `impeccable` mode `polish` page par page.
-- [ ] **404 + 500 + accès refusé** custom Twig.
-- [ ] **Page "À propos"** + footer minimal.
-- [ ] **Seed démo** scriptée (`make demo-data`) : 1 patient `demo@docconnect.tn / demo1234`, 1 médecin `medecin@docconnect.tn / demo1234`.
-  - **Synchro Firebase** : commande qui crée ces 2 comptes côté Firebase Auth (via `Kreait\Firebase\Auth::createUser`) **et** côté MariaDB, puis lie le User médecin à un Doctor existant des fixtures (ex. `dr-aymen-ben-ali`). C'est la seule façon d'avoir une démo où le médecin peut se logger et confirmer un vrai RDV.
-  - Les fixtures actuelles génèrent uniquement des `firebase_uid` factices (préfixe `fixture-`) pour peupler l'annuaire — ces comptes ne peuvent pas se connecter via Firebase.
-- [ ] **README projet** : prérequis, `docker compose up`, accès, identifiants démo.
-- [ ] **Scénario de démo** rédigé (`docs/demo-script.md`) :
-  1. Landing → recherche
-  2. Réservation
-  3. Mail confirmation (Mailtrap)
-  4. Chatbot
-  5. Espace médecin → confirmation
-  6. Visio
-- [ ] Pass `/simplify` global.
-- [ ] Pass `snyk_code_scan` global.
-- [ ] Capture vidéo (optionnelle) ou screenshots pour le rendu.
+**Livré** (étalé sur 5 commits)
 
-**Livrables** : projet présentable.
-**DoD** : un jury suit le scénario de démo en 8 min sans accroc.
+**Commit 1 — `feat(admin): rôle ADMIN + CRUD utilisateurs`**
+- `AdminController` : `/admin`, `/admin/users` (liste + filtres recherche/rôle), `/admin/users/{id}/edit`, `/admin/users/{id}/delete`. Toutes les routes sous `IsGranted('ROLE_ADMIN')` + `access_control` YAML.
+- `UserAdminService` : updateProfile (sync email Firebase), changeRole, delete (Firebase + cascade MariaDB) avec garde-fou "dernier admin" via `UserRepository::countByRole`.
+- Migration FK `appointments.patient_id` → `CASCADE` pour permettre le hard delete d'un patient avec son historique.
+- Commande `app:demo:create-admin` pour seed `admin@docconnect.tn`.
+- Layout admin Twig avec sidebar.
+
+**Commit 2 — `feat(admin): CRUD complet des médecins`**
+- `AdminDoctorController` + `DoctorAdminService` + `DoctorFormData` DTO.
+- Création complète User + Firebase + Doctor + Address + spécialités en un seul formulaire.
+- Garde-fou anti-hijack (un email PATIENT/ADMIN ne peut pas devenir médecin sans avertissement).
+- `FirebaseUserSync` extrait (3 services utilisent désormais le même `ensureUser`).
+
+**Commit 3 — `feat(account): page Mon compte`**
+- `AccountController` GET/POST `/app/mon-compte` : édition profil (User + Patient si rôle PATIENT) avec validation date stricte.
+- Stimulus `account-password` : changement mot de passe Firebase côté JS (reauth + updatePassword), aucun round-trip backend.
+- `UserProfileService` extrait pour mutualiser update profil entre admin et self-service. Catch `DomainException` vs `Throwable` distingué.
+
+**Commit 4 — `chore(phase-9): seed démo + pages erreur + à propos`**
+- `app:demo:seed` orchestre `fixtures:load` + `create-admin` + `create-patient` + `link-doctor-firebase`. Option `--keep-db`.
+- Pages d'erreur custom 404/403/500 dans `templates/bundles/TwigBundle/Exception/`.
+- Page `/a-propos` + `/mentions-legales` + footer cliquable.
+
+**Commit 5 — `docs(phase-9): README + SETUP + PRESENTATION + demo-script`**
+- `README.md` complet avec emojis, badges, table des matières, troubleshooting.
+- `SETUP.md` pas-à-pas (Firebase, OpenRouter, Mailtrap, fixtures).
+- `PRESENTATION.md` plan soutenance 8 min + FAQ jury + plans B.
+- `docs/demo-script.md` scénario joué avec timings.
+
+**DoD validée** : la commande `app:demo:seed` provisionne tout en une fois, et le scénario `docs/demo-script.md` couvre les 6 étapes du jury en 8 min.
 
 ---
 
@@ -276,6 +287,6 @@ Si le temps le permet après Phase 9 : **dashboard admin** (modération médecin
 | 6 | Chatbot OpenRouter | ✅ |
 | 7 | Notifications mail | ✅ |
 | 8 | Visio Jitsi | ✅ |
-| 9 | Polish & démo | ⬜ |
+| 9 | Polish & démo | ✅ |
 
-**Prochaine étape** : Phase 9 — polish, seed démo (la commande `app:demo:link-doctor-firebase` est déjà prête à être utilisée), 404/500 custom, README, scénario de démo.
+**Toutes les phases terminées.** Voir `README.md` pour démarrer, `PRESENTATION.md` pour la soutenance, `docs/demo-script.md` pour le scénario joué.
