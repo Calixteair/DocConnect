@@ -6,6 +6,7 @@ RUN apk add --no-cache \
         git \
         icu-dev \
         icu-libs \
+        icu-data-full \
         libzip-dev \
         oniguruma-dev \
         zip \

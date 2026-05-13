@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Doctor;
 use App\Entity\Slot;
+use App\Enum\AppointmentMode;
 use App\Enum\SlotStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -35,6 +36,32 @@ class SlotRepository extends ServiceEntityRepository
             ->setParameter('status', SlotStatus::OPEN)
             ->setParameter('weekStart', $weekStart)
             ->setParameter('weekEnd', $weekEnd)
+            ->orderBy('s.startAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    /**
+     * Comme findOpenForDoctor, mais filtre aussi sur le mode (cabinet/visio).
+     *
+     * @return list<Slot>
+     */
+    public function findOpenForDoctorWindow(Doctor $doctor, \DateTimeImmutable $from, \DateTimeImmutable $to, AppointmentMode $mode): array
+    {
+        /** @var list<Slot> $result */
+        $result = $this->createQueryBuilder('s')
+            ->andWhere('s.doctor = :doctor')
+            ->andWhere('s.status = :status')
+            ->andWhere('s.mode = :mode')
+            ->andWhere('s.startAt >= :from')
+            ->andWhere('s.startAt < :to')
+            ->setParameter('doctor', $doctor)
+            ->setParameter('status', SlotStatus::OPEN)
+            ->setParameter('mode', $mode)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
             ->orderBy('s.startAt', 'ASC')
             ->getQuery()
             ->getResult();

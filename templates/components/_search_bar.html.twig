@@ -1,0 +1,52 @@
+{#
+    Barre de recherche médecins (spécialité + ville).
+    Params :
+      - specialties : liste de Specialty pour le select
+      - specialty   : slug pré-rempli (string, défaut '')
+      - city        : ville pré-remplie (string, défaut '')
+      - size        : 'hero' (grande, sur la landing) | 'inline' (compacte, en haut de /medecins)
+#}
+{% set size = size|default('hero') %}
+{% set city = city|default('') %}
+{% set specialty = specialty|default('') %}
+
+<form
+    method="get"
+    action="{{ path('app_doctor_search') }}"
+    class="search-bar search-bar--{{ size }}"
+    role="search"
+    aria-label="Rechercher un médecin"
+>
+    <div class="search-bar__field">
+        <span class="search-bar__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </span>
+        <label for="search-specialty" class="visually-hidden">Spécialité</label>
+        <select id="search-specialty" name="specialty" class="search-bar__input">
+            <option value="">Toutes spécialités</option>
+            {% for s in specialties %}
+                <option value="{{ s.slug }}" {{ specialty == s.slug ? 'selected' : '' }}>{{ s.label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="search-bar__separator" aria-hidden="true"></div>
+
+    <div class="search-bar__field">
+        <span class="search-bar__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+        </span>
+        <label for="search-city" class="visually-hidden">Ville</label>
+        <input
+            id="search-city"
+            name="city"
+            type="text"
+            class="search-bar__input"
+            placeholder="Ville (Tunis, Sousse, Sfax…)"
+            value="{{ city }}"
+            autocomplete="address-level2"
+        >
+    </div>
+
+    <button type="submit" class="btn btn--primary search-bar__submit">Rechercher</button>
+</form>

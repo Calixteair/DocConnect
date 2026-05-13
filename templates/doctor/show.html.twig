@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ doctor.displayName }} · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container">
+        <p class="breadcrumb">
+            <a href="{{ path('app_doctor_search') }}" class="breadcrumb__link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Retour aux résultats
+            </a>
+        </p>
+
+        <div class="doctor-layout">
+            {# ====== Colonne gauche — Identité ====== #}
+            <aside class="doctor-layout__side">
+                <article class="doctor-header">
+                    <div class="doctor-header__photo" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+
+                    <h1 class="doctor-header__name">{{ doctor.displayName }}</h1>
+                    {% set specialtyLabels = [] %}
+                    {% for s in doctor.specialties %}{% set specialtyLabels = specialtyLabels|merge([s.label]) %}{% endfor %}
+                    <p class="doctor-header__specialty">{{ specialtyLabels|join(' · ') }}</p>
+
+                    {% set firstAddress = doctor.addresses|first %}
+                    {% if firstAddress %}
+                        <p class="doctor-header__location">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                            {{ firstAddress.city }}
+                        </p>
+                    {% endif %}
+
+                    <div class="doctor-header__price-row">
+                        <span class="doctor-header__price">{{ doctor.price }} TND</span>
+                        <span class="doctor-header__price-meta">— Conventionné CNAM</span>
+                    </div>
+
+                    {% if doctor.languages|length > 0 %}
+                        <p class="doctor-header__languages">
+                            Langues parlées :
+                            {% set langNames = { 'ar': 'Arabe', 'fr': 'Français', 'en': 'Anglais', 'it': 'Italien' } %}
+                            {% set labels = [] %}
+                            {% for l in doctor.languages %}{% set labels = labels|merge([langNames[l] ?? l]) %}{% endfor %}
+                            {{ labels|join(', ') }}
+                        </p>
+                    {% endif %}
+
+                    {% if doctor.acceptVisio %}
+                        <div class="doctor-header__badges">
+                            <span class="badge badge--info">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                                Téléconsultation disponible
+                            </span>
+                        </div>
+                    {% endif %}
+                </article>
+
+                {% if doctor.bio %}
+                    <section class="doctor-section">
+                        <h2 class="doctor-section__title">À propos</h2>
+                        <p class="doctor-section__body">{{ doctor.bio }}</p>
+                    </section>
+                {% endif %}
+
+                {% if doctor.addresses|length > 0 %}
+                    <section class="doctor-section">
+                        <h2 class="doctor-section__title">Adresses</h2>
+                        {% for address in doctor.addresses %}
+                            <address class="doctor-address">
+                                <p class="doctor-address__street">{{ address.street }}</p>
+                                <p class="doctor-address__meta">{{ address.postalCode }} {{ address.city }}</p>
+                            </address>
+                        {% endfor %}
+                    </section>
+                {% endif %}
+            </aside>
+
+            {# ====== Colonne droite — Réservation ====== #}
+            <section class="doctor-layout__main">
+                <div class="booking-card">
+                    <h2 class="booking-card__title">Prendre rendez-vous</h2>
+
+                    <div class="segmented" role="tablist" aria-label="Mode de consultation">
+                        <a
+                            href="{{ path('app_doctor_show', { slug: doctor.slug, week: weekOffset, mode: 'physical' }) }}"
+                            class="segmented__item{{ mode == 'PHYSICAL' ? ' is-active' : '' }}"
+                            role="tab"
+                            aria-selected="{{ mode == 'PHYSICAL' ? 'true' : 'false' }}"
+                        >Cabinet</a>
+                        <a
+                            href="{{ path('app_doctor_show', { slug: doctor.slug, week: weekOffset, mode: 'visio' }) }}"
+                            class="segmented__item{{ mode == 'VIDEO' ? ' is-active' : '' }}"
+                            role="tab"
+                            aria-selected="{{ mode == 'VIDEO' ? 'true' : 'false' }}"
+                        >Visio</a>
+                    </div>
+
+                    {% include 'components/_slot_grid.html.twig' with {
+                        doctor: doctor,
+                        slotsByDay: slotsByDay,
+                        mode: mode,
+                        weekOffset: weekOffset,
+                        windowStart: windowStart,
+                        windowEnd: windowEnd,
+                        days: days,
+                    } only %}
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+{% endblock %}

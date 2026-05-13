@@ -242,7 +242,9 @@ Roadmap en **9 phases**. Chaque phase a un **objectif**, des **tâches** (avec m
 - [ ] **Pass design final** sur toutes les pages : skill `impeccable` mode `polish` page par page.
 - [ ] **404 + 500 + accès refusé** custom Twig.
 - [ ] **Page "À propos"** + footer minimal.
-- [ ] **Seed démo** scriptée (`make demo-data`) : 1 patient `demo@docconnect.io / demo1234`, 1 médecin `medecin@docconnect.io / demo1234`.
+- [ ] **Seed démo** scriptée (`make demo-data`) : 1 patient `demo@docconnect.tn / demo1234`, 1 médecin `medecin@docconnect.tn / demo1234`.
+  - **Synchro Firebase** : commande qui crée ces 2 comptes côté Firebase Auth (via `Kreait\Firebase\Auth::createUser`) **et** côté MariaDB, puis lie le User médecin à un Doctor existant des fixtures (ex. `dr-aymen-ben-ali`). C'est la seule façon d'avoir une démo où le médecin peut se logger et confirmer un vrai RDV.
+  - Les fixtures actuelles génèrent uniquement des `firebase_uid` factices (préfixe `fixture-`) pour peupler l'annuaire — ces comptes ne peuvent pas se connecter via Firebase.
 - [ ] **README projet** : prérequis, `docker compose up`, accès, identifiants démo.
 - [ ] **Scénario de démo** rédigé (`docs/demo-script.md`) :
   1. Landing → recherche
@@ -279,11 +281,11 @@ Si le temps le permet après Phase 9 : **dashboard admin** (modération médecin
 
 | # | Phase | Statut |
 |---|---|---|
-| 0 | Cadrage & maquettes | ⬜ |
-| 1 | Setup Docker + Symfony | ⬜ |
-| 2 | Auth Firebase | ⬜ |
-| 3 | Modèle de données | ⬜ |
-| 4 | Annuaire & recherche | ⬜ |
+| 0 | Cadrage & maquettes | ✅ |
+| 1 | Setup Docker + Symfony | ✅ |
+| 2 | Auth Firebase | ✅ |
+| 3 | Modèle de données | ✅ |
+| 4 | Annuaire & recherche | ✅ |
 | 5 | Prise de RDV | ⬜ |
 | 6 | Chatbot OpenRouter | ⬜ |
 | 7 | Notifications mail | ⬜ |

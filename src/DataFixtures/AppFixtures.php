@@ -159,11 +159,15 @@ final class AppFixtures extends Fixture
         $durationMin = 20;
         $appointmentsCreated = 0;
 
+        // Fenêtre : 8 semaines (~2 mois), lun-sam. Génère ~2 400 slots/médecin.
+        $weeks = 8;
+        $totalDays = $weeks * 7;
+
         foreach ($doctors as $doctor) {
-            for ($dayOffset = 0; $dayOffset < 12; $dayOffset++) {
+            for ($dayOffset = 0; $dayOffset < $totalDays; $dayOffset++) {
                 $day = $weekStart->modify('+' . $dayOffset . ' days');
-                if ((int) $day->format('N') >= 6) {
-                    continue;
+                if ((int) $day->format('N') === 7) {
+                    continue; // pas de consultation le dimanche
                 }
 
                 foreach ($times as $time) {

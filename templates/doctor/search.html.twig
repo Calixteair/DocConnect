@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Médecins {{ city ? '— ' ~ city : '' }} · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-header__title">Rechercher un médecin</h1>
+        </header>
+
+        {% include 'components/_search_bar.html.twig' with {
+            specialties: specialties,
+            specialty: specialty,
+            city: city,
+            size: 'inline',
+        } only %}
+
+        <p class="search-results__count">
+            {% if total == 0 %}
+                Aucun médecin ne correspond à votre recherche.
+            {% elseif total == 1 %}
+                1 médecin trouvé.
+            {% else %}
+                {{ total }} médecins trouvés.
+            {% endif %}
+        </p>
+
+        {% if doctors|length > 0 %}
+            <ul class="doctor-list">
+                {% for doctor in doctors %}
+                    <li>{% include 'components/_doctor_card.html.twig' with { doctor: doctor } only %}</li>
+                {% endfor %}
+            </ul>
+
+            {% if totalPages > 1 %}
+                <nav class="pagination" aria-label="Pagination">
+                    {% for p in 1..totalPages %}
+                        <a
+                            href="{{ path('app_doctor_search', { specialty: specialty, city: city, page: p }) }}"
+                            class="pagination__item{{ p == page ? ' pagination__item--current' : '' }}"
+                            {% if p == page %}aria-current="page"{% endif %}
+                        >{{ p }}</a>
+                    {% endfor %}
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <p>Essayez avec moins de filtres ou une autre ville.</p>
+                <a href="{{ path('app_doctor_search') }}" class="btn btn--secondary">Réinitialiser</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

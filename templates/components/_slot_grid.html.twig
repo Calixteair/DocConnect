@@ -1,0 +1,67 @@
+{#
+    Grille de créneaux 7 jours glissants pour la fiche médecin.
+    Params :
+      - doctor       : App\Entity\Doctor
+      - slotsByDay   : array<string YYYY-MM-DD, array<Slot>>  // déjà filtré status=OPEN
+      - mode         : 'PHYSICAL' ou 'VIDEO'
+      - weekOffset   : int (0 = semaine actuelle)
+      - windowStart  : \DateTimeImmutable (jour de début, immutable !)
+      - windowEnd    : \DateTimeImmutable (jour de fin inclus)
+      - days         : list<\DateTimeImmutable> (les 7 jours pré-calculés)
+#}
+{% set today = "now"|date('Y-m-d') %}
+
+<div class="slot-grid">
+    <div class="slot-grid__nav">
+        <a
+            href="{{ weekOffset > 0 ? path('app_doctor_show', { slug: doctor.slug, week: weekOffset - 1, mode: mode|lower }) : '#' }}"
+            class="icon-btn{{ weekOffset == 0 ? ' icon-btn--disabled' : '' }}"
+            aria-label="Semaine précédente"
+            {{ weekOffset == 0 ? 'aria-disabled="true" tabindex="-1"' : '' }}
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </a>
+        <div class="slot-grid__nav-label" aria-live="polite">
+            Du {{ windowStart|format_date('medium', locale='fr') }} au {{ windowEnd|format_date('medium', locale='fr') }}
+        </div>
+        <a
+            href="{{ path('app_doctor_show', { slug: doctor.slug, week: weekOffset + 1, mode: mode|lower }) }}"
+            class="icon-btn"
+            aria-label="Semaine suivante"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+    </div>
+
+    <div class="slot-grid__days" role="grid">
+        {% for day in days %}
+            {% set dayKey = day|date('Y-m-d') %}
+            {% set daySlots = slotsByDay[dayKey] ?? [] %}
+            {% set isToday = dayKey == today %}
+
+            <div class="slot-day" role="row">
+                <div class="slot-day__head{{ isToday ? ' slot-day__head--today' : '' }}" role="columnheader">
+                    <span class="slot-day__dow">{{ day|format_date('full', locale='fr')|split(' ')[0]|capitalize|slice(0, 3) }}.</span>
+                    <span class="slot-day__num">{{ day|date('j') }}</span>
+                </div>
+
+                <div class="slot-day__times" role="rowgroup">
+                    {% if daySlots is empty %}
+                        <p class="slot-day__empty">—</p>
+                    {% else %}
+                        {% for slot in daySlots %}
+                            <button
+                                type="button"
+                                class="slot"
+                                data-slot-id="{{ slot.id }}"
+                                aria-label="Réserver le {{ slot.startAt|format_datetime('full', 'short', locale='fr') }} avec le {{ doctor.displayName }}"
+                            >
+                                {{ slot.startAt|date('H:i') }}
+                            </button>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
