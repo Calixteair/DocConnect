@@ -19,5 +19,23 @@ services:
     App\:
         resource: '../src/'
 
+    # Bindings spéciaux par nom d'argument
+    _instanceof:
+        Symfony\Component\RateLimiter\RateLimiterFactory:
+            public: false
+
+    App\Controller\ChatController:
+        arguments:
+            $chatMessageLimiter: '@limiter.chat_message'
+
+    # OpenRouter — clé et modèle injectés depuis l'environnement.
+    App\Chat\OpenRouterClient:
+        arguments:
+            $apiKey: '%env(OPENROUTER_API_KEY)%'
+            $model: '%env(OPENROUTER_MODEL)%'
+            $baseUrl: '%env(OPENROUTER_BASE_URL)%'
+            $appUrl: '%env(OPENROUTER_APP_URL)%'
+            $appName: '%env(OPENROUTER_APP_NAME)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -158,35 +158,22 @@ Roadmap en **9 phases**. Chaque phase a un **objectif**, des **tâches** (avec m
 
 ---
 
-## Phase 6 — Chatbot OpenRouter
+## Phase 6 — Chatbot OpenRouter ✅
 
-**Objectif** : chatbot d'orientation accessible depuis la landing et l'espace patient.
+**Objectif** : chatbot d'orientation accessible depuis l'espace patient.
 
-**Tâches**
-- [ ] Compte OpenRouter + clé API (manuel, je guide) → `.env.local`.
-- [ ] **Service `ChatOrchestrator`** :
-  - 1. **Intent matcher** (regex / mots-clés) pour réponses en dur (salut, "comment annuler", "où sont mes RDV"…),
-  - 2. **Cache** (Symfony Cache, key = `sha256(normalized_question)`, TTL 1h),
-  - 3. **Fallback LLM** : POST `chat/completions` OpenRouter en **streaming SSE**.
-- [ ] Modèle par défaut : `meta-llama/llama-3.3-70b-instruct:free` (dev) ; switchable via env.
-- [ ] **System prompt** : oriente vers spécialités, ne pose pas de diagnostic, disclaimer à chaque session.
-- [ ] **Rate limit** : 10 messages / min / user (`framework.rate_limiter`).
-- [ ] Endpoint `GET /api/chat/stream?session_id=...` (SSE).
-- [ ] Endpoint `POST /api/chat/message` (enregistre user message + déclenche le stream).
-- [ ] **UI chatbot** :
-  - bouton flottant en bas à droite (mobile : full-screen sheet),
-  - historique scrollable, indicateur "le bot écrit…",
-  - markdown rendering simple (gras / liste),
-  - Stimulus controller `chat_controller.js` avec `EventSource`,
-  - persiste `ChatSession` côté DB.
+**Livré**
+- `ChatOrchestrator` chaîne **IntentMatcher → cache Symfony (sha256 question, TTL 1 h) → LLM OpenRouter**, avec mode streaming SSE token par token.
+- Modèle par défaut : `openai/gpt-oss-20b:free` (switchable via `OPENROUTER_MODEL`). Llama 3.3 / Gemma free trop saturés.
+- System prompt strict : pas de diagnostic, oriente vers les 6 spécialités MVP, redirection 190 (SAMU Tunisie) en cas de signaux d'alerte.
+- **Liens vers l'app** : le LLM est instruit de terminer chaque orientation par un lien markdown `[label](/medecins?specialty=...)`. Le widget les rend en bouton bleu cliquable qui amène l'utilisateur sur la page de recherche pré-filtrée. Pas d'exécution d'action côté chat (pas de tool calling) — c'est volontaire pour rester safe et démo-friendly.
+- Rate limit : 10 messages / min / user via `framework.rate_limiter` token bucket.
+- Endpoints `POST /api/chat/stream` (SSE), `POST /api/chat/message` (non-stream), `GET /api/chat/history`.
+- Widget : FAB bottom-right, panneau 380×520 desktop / fullscreen mobile, historique scrollable, indicateur "écrit…" qui disparaît au premier chunk, markdown léger (gras/italique/listes/liens internes), badges debug `intent`/`cache`/`llm`.
+- Profiler Symfony désactivé sur la route stream (sinon il bufferise toute la réponse, ruinant le SSE). `fastcgi_buffering off` côté nginx, padding initial 2 ko + `ob_implicit_flush` côté PHP.
+- Persistence `ChatSession` + `ChatMessage` en MariaDB pour reprendre la conversation.
 
-**Parallélisable**
-- [//] Intent matcher + table de réponses en dur (agent #1)
-- [//] Composant Twig + Stimulus du widget chat (agent #2, skill `impeccable`)
-- [//] Tests du service OpenRouter (agent #3, mocker httpClient)
-
-**Livrables** : chatbot fonctionnel avec stream, cache, fallback dur.
-**DoD** : 3 questions identiques de suite → 1 hit LLM + 2 hits cache (vérifiable via logs).
+**DoD validée** : 3 questions identiques → 1 LLM + 2 cache (visible via badges). Streaming token-par-token fonctionnel. Liens vers spécialités générés et cliquables.
 
 ---
 
@@ -287,7 +274,7 @@ Si le temps le permet après Phase 9 : **dashboard admin** (modération médecin
 | 3 | Modèle de données | ✅ |
 | 4 | Annuaire & recherche | ✅ |
 | 5 | Prise de RDV | ✅ |
-| 6 | Chatbot OpenRouter | ⬜ |
+| 6 | Chatbot OpenRouter | ✅ |
 | 7 | Notifications mail | ⬜ |
 | 8 | Visio Jitsi | ⬜ |
 | 9 | Polish & démo | ⬜ |
