@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ status_code }} · DocConnect{% endblock %}
+
+{% block body %}
+<section class="error-page" role="main">
+    <div class="container container--narrow">
+        <p class="error-page__code">{{ status_code }}</p>
+        <h1 class="error-page__title">{% block error_title %}{% endblock %}</h1>
+        <p class="error-page__text">{% block error_text %}{% endblock %}</p>
+        <div class="error-page__actions">
+            <a href="{{ path('app_home') }}" class="btn btn--primary">Retour à l'accueil</a>
+            {% block error_extra %}{% endblock %}
+        </div>
+    </div>
+</section>
+{% endblock %}

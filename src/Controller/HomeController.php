@@ -18,4 +18,16 @@ final class HomeController extends AbstractController
             'specialties' => $specialties->findBy([], ['label' => 'ASC']),
         ]);
     }
+
+    #[Route('/a-propos', name: 'app_about', methods: ['GET'])]
+    public function about(): Response
+    {
+        return $this->render('home/about.html.twig');
+    }
+
+    #[Route('/mentions-legales', name: 'app_legal', methods: ['GET'])]
+    public function legal(): Response
+    {
+        return $this->render('home/legal.html.twig');
+    }
 }

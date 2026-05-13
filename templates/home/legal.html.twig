@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container container--narrow">
+        <header class="page-header">
+            <h1 class="page-header__title">Mentions légales</h1>
+            <p class="page-header__subtitle">Informations sur l'éditeur du projet.</p>
+        </header>
+
+        <article class="prose">
+            <h2>Éditeur</h2>
+            <p>
+                DocConnect est un projet académique réalisé dans le cadre d'un cursus
+                d'ingénierie informatique. Il n'a pas de personnalité juridique et n'est
+                associé à aucune entité commerciale.
+            </p>
+
+            <h2>Hébergement</h2>
+            <p>
+                L'application est hébergée localement (Docker) pour la démonstration. Aucune
+                donnée n'est diffusée sur Internet.
+            </p>
+
+            <h2>Données</h2>
+            <p>
+                Toutes les données affichées (médecins, patients, rendez-vous) sont des
+                données fictives générées par des fixtures Doctrine. Les comptes d'authentification
+                sont stockés via Firebase Authentication (Google).
+            </p>
+
+            <h2>Avertissement médical</h2>
+            <p>
+                DocConnect est un outil de prise de rendez-vous : il ne pose pas de diagnostic,
+                ne prescrit pas, et ne remplace pas une consultation médicale. En cas d'urgence
+                vitale, composez le <strong>190</strong> (SAMU Tunisie) ou le numéro local
+                équivalent.
+            </p>
+        </article>
+    </div>
+</section>
+{% endblock %}

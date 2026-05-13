@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}À propos · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container container--narrow">
+        <header class="page-header">
+            <h1 class="page-header__title">À propos de DocConnect</h1>
+            <p class="page-header__subtitle">Plateforme de prise de rendez-vous médicaux et téléconsultation.</p>
+        </header>
+
+        <article class="prose">
+            <h2>Notre mission</h2>
+            <p>
+                DocConnect simplifie la prise de rendez-vous médicaux : recherche par spécialité,
+                réservation en ligne d'un créneau libre, mail de confirmation, téléconsultation
+                vidéo le jour J. Le tout dans une interface sobre, accessible sans inscription
+                préalable pour les médecins de l'annuaire.
+            </p>
+
+            <h2>Comment ça marche</h2>
+            <ol>
+                <li>Cherchez un médecin par spécialité ou ville sur l'annuaire.</li>
+                <li>Consultez sa fiche : bio, tarif, langues, prochains créneaux.</li>
+                <li>Réservez un créneau libre — physique ou téléconsultation.</li>
+                <li>Recevez un mail de confirmation, puis un rappel 24 h avant.</li>
+                <li>Le jour J, retrouvez votre médecin en cabinet ou en visio depuis votre espace patient.</li>
+            </ol>
+
+            <h2>Pour les médecins</h2>
+            <p>
+                Un médecin DocConnect dispose d'un planning hebdomadaire où il valide ou refuse
+                les rendez-vous en attente, ouvre une consultation en visio depuis son agenda,
+                et peut annuler ou marquer terminé un rendez-vous en un clic.
+            </p>
+
+            <h2>Chatbot d'orientation</h2>
+            <p>
+                Pas sûr de la spécialité à consulter ? Le chatbot d'orientation, accessible depuis
+                votre espace patient, vous propose une spécialité en fonction de vos symptômes
+                et vous dirige vers les médecins correspondants. Il ne pose pas de diagnostic.
+            </p>
+
+            <h2>Contexte du projet</h2>
+            <p>
+                DocConnect est un projet d'école développé en Symfony 8, Twig et Firebase Auth.
+                Les données affichées (médecins, patients, RDV) sont fictives et destinées à la
+                démonstration. Aucune donnée médicale réelle n'est traitée par cette application.
+            </p>
+        </article>
+    </div>
+</section>
+{% endblock %}

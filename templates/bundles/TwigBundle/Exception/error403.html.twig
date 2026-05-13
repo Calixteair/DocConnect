@@ -1,0 +1,14 @@
+{% extends 'error/_layout.html.twig' %}
+
+{% block error_title %}Accès refusé{% endblock %}
+
+{% block error_text %}
+    Cette page demande une connexion ou des droits que votre compte n'a pas.
+    Si vous pensez qu'il s'agit d'une erreur, contactez l'administrateur.
+{% endblock %}
+
+{% block error_extra %}
+    {% if not app.user %}
+        <a href="{{ path('app_login') }}" class="btn btn--ghost">Se connecter</a>
+    {% endif %}
+{% endblock %}

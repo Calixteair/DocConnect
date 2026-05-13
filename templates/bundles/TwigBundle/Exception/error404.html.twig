@@ -1,0 +1,12 @@
+{% extends 'error/_layout.html.twig' %}
+
+{% block error_title %}Page introuvable{% endblock %}
+
+{% block error_text %}
+    Le lien que vous avez suivi est cassé ou la page n'existe plus.
+    Si vous cherchez un médecin, lancez une recherche depuis l'annuaire.
+{% endblock %}
+
+{% block error_extra %}
+    <a href="{{ path('app_doctor_search') }}" class="btn btn--ghost">Chercher un médecin</a>
+{% endblock %}
