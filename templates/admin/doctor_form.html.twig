@@ -1,0 +1,132 @@
+{% extends 'admin/_layout.html.twig' %}
+
+{% block title %}{{ doctor ? 'Éditer ' ~ doctor.displayName : 'Nouveau médecin' }} · Administration{% endblock %}
+
+{# Helper : valeur prioritaire = formulaire soumis (post-erreur), sinon entité existante, sinon défaut. #}
+{% macro value(submitted, key, fallback) %}{{ submitted ? submitted.get(key, fallback) : fallback }}{% endmacro %}
+{% set _v = _self %}
+
+{% set addr = doctor ? doctor.addresses|first : null %}
+{% set currentSpecialtyIds = [] %}
+{% if submitted %}
+    {% for sid in (submitted.all('specialties') ?? []) %}{% set currentSpecialtyIds = currentSpecialtyIds|merge([sid + 0]) %}{% endfor %}
+{% elseif doctor %}
+    {% for s in doctor.specialties %}{% set currentSpecialtyIds = currentSpecialtyIds|merge([s.id]) %}{% endfor %}
+{% endif %}
+
+{% set isEdit = doctor is not null %}
+{% set csrfToken = isEdit ? csrf_token('admin_doctor_edit_' ~ doctor.id) : csrf_token('admin_doctor_new') %}
+{% set formAction = isEdit ? path('app_admin_doctor_edit', { id: doctor.id }) : path('app_admin_doctor_new') %}
+
+{% block admin_content %}
+<header class="page-header">
+    <h1 class="page-header__title">{{ isEdit ? doctor.displayName : 'Nouveau médecin' }}</h1>
+    <p class="page-header__subtitle">{{ isEdit ? 'Modifier les informations professionnelles et le cabinet.' : 'Créer un compte médecin complet (compte Firebase + fiche praticien + cabinet).' }}</p>
+</header>
+
+<form method="post" action="{{ formAction }}" class="admin-form">
+    <input type="hidden" name="_token" value="{{ csrfToken }}">
+
+    <h2 class="admin-form__section">Compte</h2>
+    <div class="form-grid">
+        <label class="field">
+            <span class="field__label">Prénom</span>
+            <input type="text" name="firstName" required maxlength="80" class="field__input"
+                   value="{{ _v.value(submitted, 'firstName', isEdit ? doctor.user.firstName : '') }}">
+        </label>
+        <label class="field">
+            <span class="field__label">Nom</span>
+            <input type="text" name="lastName" required maxlength="80" class="field__input"
+                   value="{{ _v.value(submitted, 'lastName', isEdit ? doctor.user.lastName : '') }}">
+        </label>
+        <label class="field">
+            <span class="field__label">Email</span>
+            <input type="email" name="email" required class="field__input"
+                   value="{{ _v.value(submitted, 'email', isEdit ? doctor.user.email : '') }}">
+        </label>
+        <label class="field">
+            <span class="field__label">Téléphone</span>
+            <input type="tel" name="phone" maxlength="32" class="field__input"
+                   value="{{ _v.value(submitted, 'phone', isEdit ? doctor.user.phone : '') }}">
+        </label>
+        {% if not isEdit %}
+            <label class="field">
+                <span class="field__label">Mot de passe initial</span>
+                <input type="text" name="password" required minlength="6" class="field__input"
+                       value="{{ _v.value(submitted, 'password', '') }}">
+                <small class="field__hint">Le médecin pourra le changer ensuite. Minimum 6 caractères.</small>
+            </label>
+        {% endif %}
+    </div>
+
+    <h2 class="admin-form__section">Fiche professionnelle</h2>
+    <div class="form-grid">
+        <label class="field">
+            <span class="field__label">Slug (URL)</span>
+            <input type="text" name="slug" required maxlength="120" pattern="[a-z0-9-]+" class="field__input"
+                   value="{{ _v.value(submitted, 'slug', isEdit ? doctor.slug : '') }}">
+            <small class="field__hint">Lettres minuscules, chiffres et tirets uniquement. Ex. dr-aymen-ben-ali.</small>
+        </label>
+        <label class="field">
+            <span class="field__label">Numéro RPPS</span>
+            <input type="text" name="rpps" maxlength="11" class="field__input"
+                   value="{{ _v.value(submitted, 'rpps', isEdit ? doctor.rpps : '') }}">
+        </label>
+        <label class="field">
+            <span class="field__label">Tarif (DT)</span>
+            <input type="number" name="price" required min="0" max="9999" class="field__input"
+                   value="{{ _v.value(submitted, 'price', isEdit ? doctor.price : '50') }}">
+        </label>
+        <label class="field">
+            <span class="field__label">Langues parlées</span>
+            <input type="text" name="languages" placeholder="ex. fr, ar, en" class="field__input"
+                   value="{{ _v.value(submitted, 'languages', isEdit ? doctor.languages|join(', ') : 'fr, ar') }}">
+            <small class="field__hint">Codes ISO séparés par des virgules.</small>
+        </label>
+        <label class="field field--checkbox">
+            <input type="hidden" name="acceptVisio" value="0">
+            {% set visioChecked = submitted ? submitted.get('acceptVisio') == '1' : (isEdit ? doctor.acceptVisio : true) %}
+            <input type="checkbox" name="acceptVisio" value="1"{{ visioChecked ? ' checked' : '' }}>
+            <span class="field__label">Accepte les téléconsultations</span>
+        </label>
+        <label class="field field--full">
+            <span class="field__label">Biographie</span>
+            <textarea name="bio" rows="3" class="field__input">{{ _v.value(submitted, 'bio', isEdit ? doctor.bio : '') }}</textarea>
+        </label>
+    </div>
+
+    <h2 class="admin-form__section">Spécialités</h2>
+    <div class="admin-checkboxes">
+        {% for s in specialties %}
+            <label class="admin-checkbox">
+                <input type="checkbox" name="specialties[]" value="{{ s.id }}"{{ s.id in currentSpecialtyIds ? ' checked' : '' }}>
+                <span>{{ s.label }}</span>
+            </label>
+        {% endfor %}
+    </div>
+
+    <h2 class="admin-form__section">Cabinet principal</h2>
+    <div class="form-grid">
+        <label class="field field--full">
+            <span class="field__label">Rue</span>
+            <input type="text" name="street" required maxlength="200" class="field__input"
+                   value="{{ _v.value(submitted, 'street', addr ? addr.street : '') }}">
+        </label>
+        <label class="field">
+            <span class="field__label">Ville</span>
+            <input type="text" name="city" required maxlength="80" class="field__input"
+                   value="{{ _v.value(submitted, 'city', addr ? addr.city : '') }}">
+        </label>
+        <label class="field">
+            <span class="field__label">Code postal</span>
+            <input type="text" name="postalCode" required maxlength="8" class="field__input"
+                   value="{{ _v.value(submitted, 'postalCode', addr ? addr.postalCode : '') }}">
+        </label>
+    </div>
+
+    <div class="admin-form__actions">
+        <a href="{{ path('app_admin_doctors') }}" class="btn btn--ghost">Annuler</a>
+        <button type="submit" class="btn btn--primary">{{ isEdit ? 'Enregistrer' : 'Créer le médecin' }}</button>
+    </div>
+</form>
+{% endblock %}

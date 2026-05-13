@@ -1,0 +1,68 @@
+{% extends 'admin/_layout.html.twig' %}
+
+{% block title %}Médecins · Administration{% endblock %}
+
+{% block admin_content %}
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Médecins</h1>
+        <p class="page-header__subtitle">{{ doctors|length }} résultat{{ doctors|length > 1 ? 's' }}.</p>
+    </div>
+    <a href="{{ path('app_admin_doctor_new') }}" class="btn btn--primary">+ Ajouter un médecin</a>
+</header>
+
+<form method="get" action="{{ path('app_admin_doctors') }}" class="admin-filter">
+    <input type="search" name="q" value="{{ q }}" placeholder="Nom, email, slug" class="field__input">
+    <select name="specialty" class="field__input">
+        <option value="0">Toutes les spécialités</option>
+        {% for s in specialties %}
+            <option value="{{ s.id }}"{{ specialtyFilter == s.id ? ' selected' : '' }}>{{ s.label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn--primary btn--sm">Filtrer</button>
+    {% if q or specialtyFilter %}
+        <a href="{{ path('app_admin_doctors') }}" class="btn btn--ghost btn--sm">Réinitialiser</a>
+    {% endif %}
+</form>
+
+{% if doctors|length == 0 %}
+    <div class="empty-state"><p>Aucun médecin ne correspond à ce filtre.</p></div>
+{% else %}
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Médecin</th>
+                    <th scope="col">Spécialités</th>
+                    <th scope="col">Cabinet</th>
+                    <th scope="col">Tarif</th>
+                    <th scope="col">Visio</th>
+                    <th scope="col" class="admin-table__actions-col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in doctors %}
+                    {% set addr = d.addresses|first %}
+                    <tr>
+                        <td>
+                            <strong>{{ d.displayName }}</strong>
+                            <span class="admin-list__meta">{{ d.user.email }} · {{ d.slug }}</span>
+                        </td>
+                        <td>{{ d.specialties|map(s => s.label)|join(' · ')|default('—') }}</td>
+                        <td>{{ addr ? addr.city ~ ' (' ~ addr.postalCode ~ ')' : '—' }}</td>
+                        <td>{{ d.price }} DT</td>
+                        <td>{{ d.acceptVisio ? 'Oui' : 'Non' }}</td>
+                        <td class="admin-table__actions">
+                            <a href="{{ path('app_admin_doctor_edit', { id: d.id }) }}" class="btn btn--secondary btn--sm">Éditer</a>
+                            <form method="post" action="{{ path('app_admin_doctor_delete', { id: d.id }) }}" onsubmit="return confirm('Supprimer {{ d.displayName|e('js') }} ? Tous ses créneaux et RDV seront perdus.');" class="form-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('admin_doctor_delete_' ~ d.id) }}">
+                                <button type="submit" class="btn btn--danger-outline btn--sm">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

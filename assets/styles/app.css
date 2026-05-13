@@ -519,6 +519,7 @@ a:hover { color: var(--color-primary-hover); }
 
 .page-section { padding-block: var(--space-12); }
 .page-header { margin-bottom: var(--space-6); }
+.admin-main .page-header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); flex-wrap: wrap; }
 .page-header__title {
   font-family: var(--font-serif);
   font-size: var(--text-h1);
@@ -1671,3 +1672,47 @@ a:hover { color: var(--color-primary-hover); }
 }
 
 .form-inline { display: inline; }
+
+.admin-form__section {
+  font-size: var(--text-h3);
+  margin: var(--space-6) 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+.admin-form__section:first-of-type { margin-top: 0; }
+
+.field--full { grid-column: 1 / -1; }
+.field--checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+}
+.field--checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+.admin-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+  font-size: var(--text-body-sm);
+  cursor: pointer;
+}
+.admin-checkbox input[type="checkbox"] { accent-color: var(--color-primary); }
+.admin-checkbox:has(input:checked) {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
