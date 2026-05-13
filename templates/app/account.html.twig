@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container container--narrow">
+        {% for label, messages in app.flashes(['success', 'error']) %}
+            {% for msg in messages %}
+                <div class="alert alert--{{ label }}" role="status">{{ msg }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <header class="page-header">
+            <h1 class="page-header__title">Mon compte</h1>
+            <p class="page-header__subtitle">Vos informations personnelles et la sécurité de votre compte.</p>
+        </header>
+
+        <article class="account-card">
+            <header class="account-card__head">
+                <h2>Profil</h2>
+                <p>Visible par les médecins lors d'une consultation.</p>
+            </header>
+            <form method="post" action="{{ path('app_account_update') }}" class="account-form">
+                <input type="hidden" name="_token" value="{{ csrf_token('account_update') }}">
+
+                <div class="form-grid">
+                    <label class="field">
+                        <span class="field__label">Prénom</span>
+                        <input type="text" name="firstName" required maxlength="80" class="field__input" value="{{ user.firstName }}">
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Nom</span>
+                        <input type="text" name="lastName" required maxlength="80" class="field__input" value="{{ user.lastName }}">
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Email</span>
+                        <input type="email" name="email" required class="field__input" value="{{ user.email }}">
+                        <small class="field__hint">Synchronisé avec votre compte Firebase.</small>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Téléphone</span>
+                        <input type="tel" name="phone" maxlength="32" class="field__input" value="{{ user.phone }}">
+                    </label>
+
+                    {% if patient %}
+                        <label class="field">
+                            <span class="field__label">Date de naissance</span>
+                            <input type="date" name="birthdate" required class="field__input" value="{{ patient.birthdate|date('Y-m-d') }}">
+                        </label>
+                        <label class="field">
+                            <span class="field__label">Genre</span>
+                            <select name="gender" class="field__input">
+                                {% for g in genders %}
+                                    <option value="{{ g.value }}"{{ patient.gender == g ? ' selected' : '' }}>{{ {'FEMALE':'Femme','MALE':'Homme','OTHER':'Autre'}[g.value] }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label class="field field--full">
+                            <span class="field__label">Allergies & antécédents</span>
+                            <textarea name="allergies" rows="3" class="field__input" placeholder="Optionnel — partagé avec le médecin lors d'un RDV.">{{ patient.allergies }}</textarea>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="account-form__actions">
+                    <button type="submit" class="btn btn--primary">Enregistrer</button>
+                </div>
+            </form>
+        </article>
+
+        <article
+            class="account-card"
+            data-controller="account-password"
+            data-account-password-api-key-value="{{ firebase_api_key }}"
+            data-account-password-auth-domain-value="{{ firebase_auth_domain }}"
+            data-account-password-project-id-value="{{ firebase_project_id }}"
+            data-account-password-app-id-value="{{ firebase_app_id }}"
+            data-account-password-email-value="{{ user.email }}"
+        >
+            <header class="account-card__head">
+                <h2>Sécurité</h2>
+                <p>Changement de mot de passe. Pour des raisons de sécurité, on vous redemande l'actuel.</p>
+            </header>
+
+            <form data-action="submit->account-password#submit" class="account-form">
+                <div class="form-grid">
+                    <label class="field field--full">
+                        <span class="field__label">Mot de passe actuel</span>
+                        <input type="password" autocomplete="current-password" data-account-password-target="current" class="field__input">
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Nouveau mot de passe</span>
+                        <input type="password" autocomplete="new-password" minlength="6" data-account-password-target="next" class="field__input">
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Confirmation</span>
+                        <input type="password" autocomplete="new-password" minlength="6" data-account-password-target="confirm" class="field__input">
+                    </label>
+                </div>
+
+                <p class="account-feedback" data-account-password-target="feedback" data-kind="" role="status" aria-live="polite"></p>
+
+                <div class="account-form__actions">
+                    <button type="submit" class="btn btn--primary" data-account-password-target="submit">Mettre à jour</button>
+                </div>
+            </form>
+        </article>
+    </div>
+</section>
+{% endblock %}

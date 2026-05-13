@@ -18,21 +18,13 @@ final class UserAdminService
         private readonly EntityManagerInterface $em,
         private readonly FirebaseAuth $firebaseAuth,
         private readonly UserRepository $users,
+        private readonly UserProfileService $profile,
         private readonly LoggerInterface $logger,
     ) {}
 
     public function updateProfile(User $user, string $firstName, string $lastName, ?string $phone, string $email): void
     {
-        $user->setFirstName($firstName);
-        $user->setLastName($lastName);
-        $user->setPhone($phone);
-
-        if ($user->getEmail() !== $email) {
-            $this->firebaseAuth->updateUser($user->getFirebaseUid(), ['email' => $email, 'emailVerified' => true]);
-            $user->setEmail($email);
-        }
-
-        $this->em->flush();
+        $this->profile->update($user, $firstName, $lastName, $phone, $email);
     }
 
     public function changeRole(User $user, UserRole $newRole): void

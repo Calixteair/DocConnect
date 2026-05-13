@@ -44,6 +44,7 @@
                         <a href="{{ path('app_admin_home') }}" class="btn btn--ghost btn--sm">Administration</a>
                     {% endif %}
                     <a href="{{ path('app_my_appointments') }}" class="btn btn--ghost btn--sm">Mes RDV</a>
+                    <a href="{{ path('app_account') }}" class="btn btn--ghost btn--sm">Mon compte</a>
                     <button type="button" class="btn btn--secondary btn--sm" data-action="click->logout#signOut">Se déconnecter</button>
                 {% else %}
                     <a href="{{ path('app_login') }}" class="btn btn--ghost btn--sm">Connexion</a>
