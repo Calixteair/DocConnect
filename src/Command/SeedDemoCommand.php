@@ -50,6 +50,10 @@ final class SeedDemoCommand extends Command
             $io->section('1/4 — DB conservée (--keep-db)');
         }
 
+        // Mots de passe en dur acceptés ici : c'est une commande de seed DÉMO
+        // dont le but explicite est de provisionner les comptes Firebase de
+        // démonstration locale. Ne pas commiter de secrets de production via
+        // ce pattern — voir SETUP.md pour la config prod via .env.local.
         $steps = [
             '2/4 — Compte admin' => ['app:demo:create-admin', []],
             '3/4 — Compte patient demo' => ['app:demo:create-patient', []],
