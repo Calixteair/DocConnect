@@ -27,6 +27,17 @@
                 </span>
                 <span>DocConnect</span>
             </a>
+
+            <nav class="header-actions" aria-label="Compte">
+                {% if app.user %}
+                    <span class="header-actions__user">{{ app.user.fullName }}</span>
+                    <a href="{{ path('app_my_appointments') }}" class="btn btn--ghost btn--sm">Mes RDV</a>
+                    <a href="{{ path('app_logout') }}" class="btn btn--secondary btn--sm">Se déconnecter</a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="btn btn--ghost btn--sm">Connexion</a>
+                    <a href="{{ path('app_signup') }}" class="btn btn--primary btn--sm">Inscription</a>
+                {% endif %}
+            </nav>
         </div>
     </header>
 

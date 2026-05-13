@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }} · DocConnect{% endblock %}
+
+{% block body %}
+<section class="container" style="padding-block: var(--space-12);">
+    <h1 style="font-size: var(--text-h1); margin: 0 0 var(--space-2);">{{ title }}</h1>
+    <p style="color: var(--color-text-muted); margin: 0 0 var(--space-6);">
+        Bienvenue, {{ user.fullName }}. Cet écran sera étoffé en Phase 5.
+    </p>
+    <p style="margin: 0;">
+        <a href="{{ path('app_logout') }}" class="btn btn--secondary">Se déconnecter</a>
+    </p>
+</section>
+{% endblock %}

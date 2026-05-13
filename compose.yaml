@@ -35,6 +35,8 @@ services:
   db:
     image: mariadb:11.4
     container_name: docconnect-db
+    ports:
+      - "3307:3306"
     environment:
       MARIADB_ROOT_PASSWORD: root
       MARIADB_DATABASE: docconnect

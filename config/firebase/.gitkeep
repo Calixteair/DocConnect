@@ -1,0 +1,3 @@
+# Le dossier existe pour que kreait_firebase.yaml puisse résoudre le chemin.
+# Le fichier service-account.json est généré par Firebase Console (cf. docs/firebase-setup.md).
+# Il est gitignored — NE JAMAIS le committer.

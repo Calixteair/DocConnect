@@ -19,8 +19,20 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
+###> firebase ###
+/config/firebase/*.json
+###< firebase ###
+
 # Éditeurs / OS
 /.idea/
 /.vscode/
 .DS_Store
 Thumbs.db
+
+# Screenshots/captures locales — pas dans le repo
+*.png
+*.jpg
+*.jpeg
+!docs/**/*.png
+!docs/**/*.jpg
+!docs/**/*.jpeg

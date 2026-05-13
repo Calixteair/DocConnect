@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion · DocConnect{% endblock %}
+
+{% block body %}
+<section class="auth-page container">
+    <div class="auth-card">
+        <h1 class="auth-card__title">Connexion</h1>
+        <p class="auth-card__subtitle">Accédez à votre espace patient pour gérer vos rendez-vous.</p>
+
+        {% include 'auth/_form.html.twig' with {
+            mode: 'login',
+            firebase_api_key: firebase_api_key,
+            firebase_auth_domain: firebase_auth_domain,
+            firebase_project_id: firebase_project_id,
+            firebase_app_id: firebase_app_id,
+        } only %}
+
+        <p class="auth-card__alt">
+            Pas encore de compte ? <a href="{{ path('app_signup') }}">Créer un compte</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

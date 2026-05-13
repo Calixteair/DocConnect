@@ -25,4 +25,31 @@ return [
     '@hotwired/turbo' => [
         'version' => '8.0.23',
     ],
+    'firebase/app' => [
+        'version' => '11.10.0',
+    ],
+    'firebase/auth' => [
+        'version' => '11.10.0',
+    ],
+    '@firebase/app' => [
+        'version' => '0.13.2',
+    ],
+    '@firebase/auth' => [
+        'version' => '1.10.8',
+    ],
+    '@firebase/component' => [
+        'version' => '0.6.18',
+    ],
+    '@firebase/logger' => [
+        'version' => '0.4.4',
+    ],
+    '@firebase/util' => [
+        'version' => '1.12.1',
+    ],
+    'idb' => [
+        'version' => '7.1.1',
+    ],
+    'tslib' => [
+        'version' => '2.8.1',
+    ],
 ];

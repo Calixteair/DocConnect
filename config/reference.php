@@ -1455,6 +1455,20 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     generate_final_classes?: bool|Param, // Default: true
  *     generate_final_entities?: bool|Param, // Default: false
  * }
+ * @psalm-type KreaitFirebaseConfig = array{
+ *     projects?: array<string, array{ // Default: []
+ *         credentials?: mixed, // Path to the project's Service Account credentials file or the json/array credentials parameters. If omitted, the credentials will be auto-dicovered as described in https://firebase-php.readthedocs.io/en/stable/setup.html
+ *         project_id?: scalar|Param|null, // Override the project id. Useful when credentials and service are from different projects // Default: null
+ *         public?: scalar|Param|null, // If set to false, the service and its alias can only be used via dependency injection, and not be retrieved from the container directly. // Default: true
+ *         default?: scalar|Param|null, // If set to true, this project will be used when type hinting the component classes of the Firebase SDK, e.g. Kreait\Firebase\Auth, Kreait\Firebase\Database, Kreait\Firebase\Messaging, etc. // Default: null
+ *         database_uri?: scalar|Param|null, // Should only be used if the URL of your Realtime Database can not be generated with the project id of the given Service Account
+ *         tenant_id?: scalar|Param|null, // Make the client tenant aware // Default: null
+ *         verifier_cache?: scalar|Param|null, // Used to cache Google's public keys for ID Token verification. // Default: null
+ *         auth_token_cache?: scalar|Param|null, // Used to cache the authentication tokens for connecting to the Firebase servers. // Default: null
+ *         key_set_cache?: scalar|Param|null, // Used to cache Google's public keys for AppCheck token verification. // Default: null
+ *         http_client_options?: scalar|Param|null, // Service id of a Kreait\Firebase\Http\HttpClientOptions instance to configure the SDK HTTP client. // Default: null
+ *     }>,
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1468,6 +1482,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     twig_extra?: TwigExtraConfig,
  *     security?: SecurityConfig,
  *     monolog?: MonologConfig,
+ *     kreait_firebase?: KreaitFirebaseConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1484,6 +1499,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
  *         maker?: MakerConfig,
+ *         kreait_firebase?: KreaitFirebaseConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1498,6 +1514,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
+ *         kreait_firebase?: KreaitFirebaseConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1513,6 +1530,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
+ *         kreait_firebase?: KreaitFirebaseConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,
