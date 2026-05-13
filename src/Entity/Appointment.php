@@ -24,7 +24,7 @@ class Appointment
     private Slot $slot;
 
     #[ORM\ManyToOne(targetEntity: Patient::class)]
-    #[ORM\JoinColumn(name: 'patient_id', nullable: false, onDelete: 'RESTRICT')]
+    #[ORM\JoinColumn(name: 'patient_id', nullable: false, onDelete: 'CASCADE')]
     private Patient $patient;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

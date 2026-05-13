@@ -1,0 +1,61 @@
+{% extends 'admin/_layout.html.twig' %}
+
+{% block title %}Utilisateurs · Administration{% endblock %}
+
+{% block admin_content %}
+<header class="page-header">
+    <h1 class="page-header__title">Utilisateurs</h1>
+    <p class="page-header__subtitle">{{ users|length }} résultat{{ users|length > 1 ? 's' }}.</p>
+</header>
+
+<form method="get" action="{{ path('app_admin_users') }}" class="admin-filter">
+    <input type="search" name="q" value="{{ q }}" placeholder="Rechercher (nom, email)" class="field__input">
+    <select name="role" class="field__input">
+        <option value="">Tous les rôles</option>
+        {% for r in roles %}
+            <option value="{{ r.value }}"{{ roleFilter == r.value ? ' selected' : '' }}>{{ r.value|capitalize }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn--primary btn--sm">Filtrer</button>
+    {% if q or roleFilter %}
+        <a href="{{ path('app_admin_users') }}" class="btn btn--ghost btn--sm">Réinitialiser</a>
+    {% endif %}
+</form>
+
+{% if users|length == 0 %}
+    <div class="empty-state"><p>Aucun utilisateur ne correspond à ce filtre.</p></div>
+{% else %}
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Rôle</th>
+                    <th scope="col">Inscrit le</th>
+                    <th scope="col" class="admin-table__actions-col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                    <tr>
+                        <td><strong>{{ u.fullName }}</strong></td>
+                        <td>{{ u.email }}</td>
+                        <td><span class="badge badge--{{ {'PATIENT':'info','DOCTOR':'success','ADMIN':'warning'}[u.role.value] }}">{{ u.role.value|capitalize }}</span></td>
+                        <td>{{ u.createdAt|format_date('medium', locale='fr') }}</td>
+                        <td class="admin-table__actions">
+                            <a href="{{ path('app_admin_user_edit', { id: u.id }) }}" class="btn btn--secondary btn--sm">Éditer</a>
+                            {% if u != app.user %}
+                                <form method="post" action="{{ path('app_admin_user_delete', { id: u.id }) }}" onsubmit="return confirm('Supprimer définitivement {{ u.fullName|e('js') }} ({{ u.email|e('js') }}) ? Cette action est irréversible.');" class="form-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_user_delete_' ~ u.id) }}">
+                                    <button type="submit" class="btn btn--danger-outline btn--sm">Supprimer</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

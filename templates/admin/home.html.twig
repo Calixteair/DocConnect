@@ -1,0 +1,51 @@
+{% extends 'admin/_layout.html.twig' %}
+
+{% block title %}Administration · DocConnect{% endblock %}
+
+{% block admin_content %}
+<header class="page-header">
+    <h1 class="page-header__title">Tableau de bord</h1>
+    <p class="page-header__subtitle">Vue d'ensemble des utilisateurs DocConnect.</p>
+</header>
+
+<div class="admin-stats">
+    <div class="admin-stat">
+        <div class="admin-stat__label">Utilisateurs</div>
+        <div class="admin-stat__value">{{ counts.total }}</div>
+    </div>
+    <div class="admin-stat">
+        <div class="admin-stat__label">Patients</div>
+        <div class="admin-stat__value">{{ counts.patients }}</div>
+    </div>
+    <div class="admin-stat">
+        <div class="admin-stat__label">Médecins</div>
+        <div class="admin-stat__value">{{ counts.doctors }}</div>
+    </div>
+    <div class="admin-stat">
+        <div class="admin-stat__label">Administrateurs</div>
+        <div class="admin-stat__value">{{ counts.admins }}</div>
+    </div>
+</div>
+
+<section class="admin-section">
+    <header class="admin-section__head">
+        <h2>Derniers inscrits</h2>
+        <a href="{{ path('app_admin_users') }}" class="btn btn--ghost btn--sm">Voir tous</a>
+    </header>
+    {% if recent|length == 0 %}
+        <p class="admin-section__empty">Aucun utilisateur enregistré.</p>
+    {% else %}
+        <ul class="admin-list">
+            {% for u in recent %}
+                <li class="admin-list__item">
+                    <div>
+                        <strong>{{ u.fullName }}</strong>
+                        <span class="admin-list__meta">{{ u.email }}</span>
+                    </div>
+                    <span class="badge badge--{{ {'PATIENT':'info','DOCTOR':'success','ADMIN':'warning'}[u.role.value] }}">{{ u.role.value|capitalize }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</section>
+{% endblock %}

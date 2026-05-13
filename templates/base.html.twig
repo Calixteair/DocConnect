@@ -40,6 +40,9 @@
             >
                 {% if app.user %}
                     <span class="header-actions__user">{{ app.user.fullName }}</span>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_admin_home') }}" class="btn btn--ghost btn--sm">Administration</a>
+                    {% endif %}
                     <a href="{{ path('app_my_appointments') }}" class="btn btn--ghost btn--sm">Mes RDV</a>
                     <button type="button" class="btn btn--secondary btn--sm" data-action="click->logout#signOut">Se déconnecter</button>
                 {% else %}

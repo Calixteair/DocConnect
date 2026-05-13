@@ -1,0 +1,52 @@
+{% extends 'admin/_layout.html.twig' %}
+
+{% block title %}Éditer {{ user.fullName }} · Administration{% endblock %}
+
+{% block admin_content %}
+<header class="page-header">
+    <h1 class="page-header__title">{{ user.fullName }}</h1>
+    <p class="page-header__subtitle">Modifier le profil et le rôle de cet utilisateur.</p>
+</header>
+
+<form method="post" action="{{ path('app_admin_user_edit', { id: user.id }) }}" class="admin-form">
+    <input type="hidden" name="_token" value="{{ csrf_token('admin_user_edit_' ~ user.id) }}">
+
+    <div class="form-grid">
+        <label class="field">
+            <span class="field__label">Prénom</span>
+            <input type="text" name="firstName" value="{{ user.firstName }}" required maxlength="80" class="field__input">
+        </label>
+        <label class="field">
+            <span class="field__label">Nom</span>
+            <input type="text" name="lastName" value="{{ user.lastName }}" required maxlength="80" class="field__input">
+        </label>
+        <label class="field">
+            <span class="field__label">Email</span>
+            <input type="email" name="email" value="{{ user.email }}" required class="field__input">
+            <small class="field__hint">Synchronisé avec Firebase Auth.</small>
+        </label>
+        <label class="field">
+            <span class="field__label">Téléphone</span>
+            <input type="tel" name="phone" value="{{ user.phone }}" maxlength="32" class="field__input">
+        </label>
+        <label class="field">
+            <span class="field__label">Rôle</span>
+            <select name="role" class="field__input">
+                {% for r in roles %}
+                    <option value="{{ r.value }}"{{ user.role == r ? ' selected' : '' }}>{{ r.value|capitalize }}</option>
+                {% endfor %}
+            </select>
+            <small class="field__hint">Changer un rôle ne crée pas automatiquement le profil Patient/Doctor associé.</small>
+        </label>
+        <div class="field">
+            <span class="field__label">Firebase UID</span>
+            <code class="admin-uid">{{ user.firebaseUid }}</code>
+        </div>
+    </div>
+
+    <div class="admin-form__actions">
+        <a href="{{ path('app_admin_users') }}" class="btn btn--ghost">Annuler</a>
+        <button type="submit" class="btn btn--primary">Enregistrer</button>
+    </div>
+</form>
+{% endblock %}
