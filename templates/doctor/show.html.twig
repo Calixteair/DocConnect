@@ -3,7 +3,12 @@
 {% block title %}{{ doctor.displayName }} · DocConnect{% endblock %}
 
 {% block body %}
-<section class="page-section">
+<section
+    class="page-section"
+    data-controller="booking"
+    data-booking-is-authenticated-value="{{ app.user ? 'true' : 'false' }}"
+    data-booking-login-url-value="{{ path('app_login') }}"
+>
     <div class="container">
         <p class="breadcrumb">
             <a href="{{ path('app_doctor_search') }}" class="breadcrumb__link">
@@ -109,6 +114,48 @@
                     } only %}
                 </div>
             </section>
+        </div>
+    </div>
+
+    {# ====== Modal de confirmation de booking ====== #}
+    <div class="modal" hidden data-open="false" data-booking-target="modal" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
+        <div class="modal__overlay" data-action="click->booking#close"></div>
+        <div class="modal__dialog">
+            <button type="button" class="modal__close" aria-label="Fermer" data-action="click->booking#close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            <h2 class="modal__title" id="booking-modal-title">Confirmer le rendez-vous</h2>
+
+            <div class="modal__recap">
+                <p class="modal__recap-doctor">{{ doctor.displayName }}</p>
+                <p class="modal__recap-meta" data-booking-target="recapDate">—</p>
+                <p class="modal__recap-meta">Mode : {{ mode == 'VIDEO' ? 'Téléconsultation' : 'Cabinet' }}</p>
+            </div>
+
+            <form method="post" action="{{ path('app_appointment_create') }}" data-booking-target="form">
+                <input type="hidden" name="_token" value="{{ csrf_token('book_appointment') }}">
+                <input type="hidden" name="slot_id" data-booking-target="slotIdInput" value="">
+                <input type="hidden" name="doctor_slug" value="{{ doctor.slug }}">
+
+                <div class="field">
+                    <label class="field__label" for="motif">Motif de consultation (optionnel)</label>
+                    <textarea
+                        id="motif"
+                        name="motif"
+                        class="field__input"
+                        rows="3"
+                        maxlength="500"
+                        placeholder="Décrivez brièvement votre motif (ex : renouvellement d'ordonnance)."
+                        data-booking-target="motifInput"
+                    ></textarea>
+                    <p class="field__hint">500 caractères maximum.</p>
+                </div>
+
+                <div class="modal__footer">
+                    <button type="button" class="btn btn--ghost" data-action="click->booking#close">Annuler</button>
+                    <button type="submit" class="btn btn--primary">Confirmer le RDV</button>
+                </div>
+            </form>
         </div>
     </div>
 </section>

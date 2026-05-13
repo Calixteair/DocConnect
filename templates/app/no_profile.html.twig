@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil incomplet · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container">
+        <div class="empty-state">
+            <h1>Profil à compléter</h1>
+            <p>Votre compte est créé, mais aucun profil métier (patient ou médecin) ne lui est rattaché.</p>
+            <a href="{{ path('app_home') }}" class="btn btn--secondary">Retour à l'accueil</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

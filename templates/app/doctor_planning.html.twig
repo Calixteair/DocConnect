@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon planning · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container">
+        {% for label, messages in app.flashes(['success', 'error']) %}
+            {% for msg in messages %}
+                <div class="alert alert--{{ label }}" role="status">{{ msg }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <header class="page-header">
+            <h1 class="page-header__title">Mon planning</h1>
+            <p class="page-header__subtitle">{{ doctor.displayName }} —
+                {% set labels = [] %}{% for s in doctor.specialties %}{% set labels = labels|merge([s.label]) %}{% endfor %}
+                {{ labels|join(' · ') }}
+            </p>
+        </header>
+
+        <div class="planning-toolbar">
+            <a
+                href="{{ weekOffset > 0 ? path('app_doctor_planning', { week: weekOffset - 1 }) : '#' }}"
+                class="icon-btn{{ weekOffset == 0 ? ' icon-btn--disabled' : '' }}"
+                aria-label="Semaine précédente"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </a>
+            <div class="planning-toolbar__label">
+                Semaine du {{ weekStart|format_date('medium', locale='fr') }} au {{ weekEnd|format_date('medium', locale='fr') }}
+            </div>
+            <a
+                href="{{ path('app_doctor_planning', { week: weekOffset + 1 }) }}"
+                class="icon-btn"
+                aria-label="Semaine suivante"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+        </div>
+
+        <div class="planning-grid">
+            {% for day in days %}
+                {% set dayKey = day|date('Y-m-d') %}
+                {% set daySlots = slotsByDay[dayKey] ?? [] %}
+
+                <div class="planning-day">
+                    <div class="planning-day__head">
+                        <span class="planning-day__dow">{{ day|format_date(pattern='EEEE', locale='fr')|capitalize }}</span>
+                        <span class="planning-day__num">{{ day|date('j') }}</span>
+                    </div>
+
+                    <div class="planning-day__body">
+                        {% if daySlots is empty %}
+                            <p class="planning-day__empty">Aucun créneau</p>
+                        {% else %}
+                            {% for slot in daySlots %}
+                                {% set appt = slot.appointment ?? null %}
+                                {% set isBooked = slot.status.value == 'BOOKED' %}
+                                <div class="planning-slot planning-slot--{{ slot.status.value|lower }}">
+                                    <span class="planning-slot__time">{{ slot.startAt|date('H:i') }}</span>
+                                    {% if isBooked %}
+                                        {% set appt = appointmentsBySlot[slot.id] ?? null %}
+                                        {% if appt %}
+                                            <span class="planning-slot__patient">{{ appt.patient.user.firstName }} {{ appt.patient.user.lastName|slice(0, 1) }}.</span>
+                                            <span class="badge badge--{{ {'PENDING':'warning','CONFIRMED':'info','DONE':'neutral','CANCELLED':'danger'}[appt.status.value] }}">
+                                                {{ {'PENDING':'En attente','CONFIRMED':'Confirmé','DONE':'Terminé','CANCELLED':'Annulé'}[appt.status.value] }}
+                                            </span>
+                                        {% else %}
+                                            <span class="planning-slot__patient">Occupé</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="planning-slot__patient">Libre</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

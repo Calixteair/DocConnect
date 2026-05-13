@@ -1,0 +1,89 @@
+{#
+    Params :
+      - appointment : App\Entity\Appointment
+      - mode        : 'upcoming' | 'past'
+      - now         : \DateTimeImmutable
+#}
+{% set slot = appointment.slot %}
+{% set doctor = slot.doctor %}
+{% set startAt = slot.startAt %}
+{% set isVisio = slot.mode.value == 'VIDEO' %}
+{% set statusVariant = {
+    'PENDING': 'warning',
+    'CONFIRMED': 'success',
+    'CANCELLED': 'danger',
+    'DONE': 'neutral'
+}[appointment.status.value] %}
+{% set statusLabel = {
+    'PENDING': 'En attente',
+    'CONFIRMED': 'Confirmé',
+    'CANCELLED': 'Annulé',
+    'DONE': 'Terminé'
+}[appointment.status.value] %}
+
+{% set canJoinVisio = isVisio
+    and mode == 'upcoming'
+    and appointment.status.value == 'CONFIRMED'
+    and now >= startAt|date_modify('-10 minutes')
+    and now <= slot.endAt|date_modify('+30 minutes') %}
+
+{% set canCancel = mode == 'upcoming'
+    and appointment.status.value in ['PENDING', 'CONFIRMED']
+    and now < startAt|date_modify('-2 hours') %}
+
+<li>
+    <article class="appointment-card{{ mode == 'past' ? ' appointment-card--past' : '' }}">
+        <div class="appointment-card__date" aria-hidden="true">
+            <span class="appointment-card__date-dow">{{ startAt|format_date(pattern='EEE', locale='fr')|upper }}</span>
+            <span class="appointment-card__date-day">{{ startAt|date('j') }}</span>
+            <span class="appointment-card__date-mon">{{ startAt|format_date(pattern='MMM', locale='fr')|upper }}</span>
+        </div>
+
+        <div class="appointment-card__info">
+            <h3 class="appointment-card__doctor">{{ doctor.displayName }}</h3>
+            <p class="appointment-card__specialty">
+                {% set labels = [] %}{% for s in doctor.specialties %}{% set labels = labels|merge([s.label]) %}{% endfor %}
+                {{ labels|join(' · ') }}
+            </p>
+
+            <div class="appointment-card__when">
+                <span>{{ startAt|format_datetime(pattern='EEEE d MMMM y — HH:mm', locale='fr')|capitalize }}</span>
+                <span class="badge badge--{{ statusVariant }}">{{ statusLabel }}</span>
+            </div>
+
+            <p class="appointment-card__where">
+                {% if isVisio %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                    Téléconsultation
+                {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                    {% set addr = doctor.addresses|first %}
+                    {% if addr %}{{ addr.street }}, {{ addr.postalCode }} {{ addr.city }}{% else %}Cabinet{% endif %}
+                {% endif %}
+            </p>
+        </div>
+
+        {% if mode == 'upcoming' %}
+            <div class="appointment-card__actions">
+                {% if canJoinVisio %}
+                    <a href="#" class="btn btn--primary btn--sm">Rejoindre la visio</a>
+                {% endif %}
+                <a href="{{ path('app_doctor_show', { slug: doctor.slug }) }}" class="btn btn--secondary btn--sm">Voir la fiche</a>
+                {% if canCancel %}
+                    {% set formId = 'cancel-form-' ~ appointment.id %}
+                    {% set recap = doctor.displayName ~ ' — ' ~ startAt|format_datetime(pattern='EEEE d MMMM y à HH:mm', locale='fr') %}
+                    <form id="{{ formId }}" method="post" action="{{ path('app_appointment_cancel', { id: appointment.id }) }}" style="display: contents;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('cancel_appointment_' ~ appointment.id) }}">
+                    </form>
+                    <button
+                        type="button"
+                        class="btn btn--danger-outline btn--sm"
+                        data-action="click->cancel#open"
+                        data-form-id="{{ formId }}"
+                        data-recap="{{ recap }}"
+                    >Annuler</button>
+                {% endif %}
+            </div>
+        {% endif %}
+    </article>
+</li>

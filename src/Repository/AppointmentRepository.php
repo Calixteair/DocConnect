@@ -65,6 +65,30 @@ class AppointmentRepository extends ServiceEntityRepository
     /**
      * @return list<Appointment>
      */
+    public function findForDoctorBetween(Doctor $doctor, \DateTimeImmutable $from, \DateTimeImmutable $to): array
+    {
+        /** @var list<Appointment> $result */
+        $result = $this->createQueryBuilder('a')
+            ->innerJoin('a.slot', 's')
+            ->innerJoin('a.patient', 'p')
+            ->innerJoin('p.user', 'pu')
+            ->addSelect('s', 'p', 'pu')
+            ->andWhere('s.doctor = :doctor')
+            ->andWhere('s.startAt >= :from')
+            ->andWhere('s.startAt < :to')
+            ->setParameter('doctor', $doctor)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->orderBy('s.startAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    /**
+     * @return list<Appointment>
+     */
     public function findPendingForDoctor(Doctor $doctor): array
     {
         /** @var list<Appointment> $result */

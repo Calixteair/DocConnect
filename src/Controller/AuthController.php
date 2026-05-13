@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Patient;
 use App\Entity\User;
+use App\Enum\Gender;
 use App\Enum\UserRole;
+use App\Repository\PatientRepository;
 use App\Repository\UserRepository;
 use App\Security\FirebaseAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +30,7 @@ final class AuthController extends AbstractController
     public function __construct(
         private readonly FirebaseAuth $firebaseAuth,
         private readonly UserRepository $users,
+        private readonly PatientRepository $patients,
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger,
     ) {}
@@ -90,10 +94,31 @@ final class AuthController extends AbstractController
             );
             $user->setRole(UserRole::PATIENT);
             $this->em->persist($user);
+
+            // Auto-création du Patient lié — sans ça l'utilisateur ne pourrait pas
+            // réserver de RDV. Date de naissance / genre placeholders ; on les
+            // affinera plus tard (page de profil hors MVP).
+            $patient = new Patient(
+                user: $user,
+                birthdate: new \DateTimeImmutable('1990-01-01'),
+                gender: Gender::OTHER,
+            );
+            $this->em->persist($patient);
         } else {
             // Maintien sync : si l'email Firebase a changé, on met à jour.
             if ($user->getEmail() !== $email) {
                 $user->setEmail($email);
+            }
+            // Filet de sécurité : si un User existe sans Patient (cas legacy ou
+            // role PATIENT promu depuis ADMIN/DOCTOR), on en crée un.
+            if (UserRole::PATIENT === $user->getRole()
+                && null === $this->patients->findByUserId((int) $user->getId())) {
+                $patient = new Patient(
+                    user: $user,
+                    birthdate: new \DateTimeImmutable('1990-01-01'),
+                    gender: Gender::OTHER,
+                );
+                $this->em->persist($patient);
             }
         }
 

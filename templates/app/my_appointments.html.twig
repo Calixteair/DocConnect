@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes rendez-vous · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section" data-controller="cancel">
+    <div class="container">
+        {% for label, messages in app.flashes(['success', 'error']) %}
+            {% for msg in messages %}
+                <div class="alert alert--{{ label }}" role="status">{{ msg }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <header class="page-header">
+            <h1 class="page-header__title">Mes rendez-vous</h1>
+            <p class="page-header__subtitle">Retrouvez vos rendez-vous à venir et l'historique de vos consultations.</p>
+        </header>
+
+        <section aria-labelledby="upcoming-title">
+            <h2 class="appointments-section__title" id="upcoming-title">À venir ({{ upcoming|length }})</h2>
+
+            {% if upcoming|length == 0 %}
+                <div class="empty-state">
+                    <p>Vous n'avez aucun rendez-vous à venir.</p>
+                    <a href="{{ path('app_doctor_search') }}" class="btn btn--primary">Trouver un médecin</a>
+                </div>
+            {% else %}
+                <ul class="appointments-list">
+                    {% for appt in upcoming %}
+                        {% include 'app/_appointment_card.html.twig' with { appointment: appt, mode: 'upcoming', now: now } only %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+
+        {% if past|length > 0 %}
+            <section aria-labelledby="past-title" class="appointments-section--past">
+                <h2 class="appointments-section__title" id="past-title">Historique ({{ past|length }})</h2>
+                <ul class="appointments-list">
+                    {% for appt in past %}
+                        {% include 'app/_appointment_card.html.twig' with { appointment: appt, mode: 'past', now: now } only %}
+                    {% endfor %}
+                </ul>
+            </section>
+        {% endif %}
+    </div>
+
+    {# ====== Modal d'annulation (déclenchée par les boutons "Annuler") ====== #}
+    <div class="modal" hidden data-open="false" data-cancel-target="modal" role="dialog" aria-modal="true" aria-labelledby="cancel-modal-title">
+        <div class="modal__overlay" data-action="click->cancel#close"></div>
+        <div class="modal__dialog">
+            <button type="button" class="modal__close" aria-label="Fermer" data-action="click->cancel#close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+
+            <h2 class="modal__title" id="cancel-modal-title">Annuler ce rendez-vous ?</h2>
+
+            <div class="modal__recap">
+                <p class="modal__recap-meta" data-cancel-target="recap">—</p>
+            </div>
+
+            <p class="modal__text">
+                L'annulation libère le créneau et prévient le médecin par mail.
+                Cette action est définitive.
+            </p>
+
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" data-action="click->cancel#close">Conserver le RDV</button>
+                <button type="button" class="btn btn--danger-solid" data-cancel-target="confirmButton" data-action="click->cancel#confirm">Annuler le RDV</button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
