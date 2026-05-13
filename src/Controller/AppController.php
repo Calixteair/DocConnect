@@ -100,6 +100,7 @@ final class AppController extends AbstractController
             'weekStart' => $weekStart,
             'weekEnd' => $weekEnd->modify('-1 day'),
             'weekOffset' => $weekOffset,
+            'now' => new \DateTimeImmutable(),
         ]);
     }
 }

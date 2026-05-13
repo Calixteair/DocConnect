@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Visio indisponible · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container">
+        <div class="empty-state">
+            <h1>Ce rendez-vous est en cabinet</h1>
+            <p style="margin-top: var(--space-3); color: var(--color-text-muted);">
+                Ce rendez-vous a été pris en consultation au cabinet, pas en téléconsultation.
+                Présentez-vous à l'adresse indiquée dans votre espace.
+            </p>
+            <a href="{{ path('app_my_appointments') }}" class="btn btn--secondary">Retour à mes RDV</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

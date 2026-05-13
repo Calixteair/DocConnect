@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Visio non accessible · DocConnect{% endblock %}
+
+{% block body %}
+<section class="page-section">
+    <div class="container">
+        <div class="empty-state">
+            <h1>Téléconsultation pas encore accessible</h1>
+            <p style="margin-top: var(--space-3); color: var(--color-text-muted);">
+                {% if now < openFrom %}
+                    La salle ouvrira à <strong>{{ openFrom|date('H:i') }}</strong>,
+                    soit 10&nbsp;minutes avant le début du rendez-vous prévu à
+                    <strong>{{ appointment.slot.startAt|date('H:i') }}</strong>.
+                {% else %}
+                    La fenêtre de consultation est terminée
+                    (clôture à <strong>{{ openUntil|date('H:i') }}</strong>).
+                    Si vous n'avez pas pu rejoindre, contactez le médecin pour reprogrammer.
+                {% endif %}
+            </p>
+            <a href="{{ path('app_my_appointments') }}" class="btn btn--secondary">Retour à mes RDV</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

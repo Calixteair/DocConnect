@@ -20,8 +20,9 @@ final class AppointmentVoter extends Voter
     public const VIEW = 'APPOINTMENT_VIEW';
     public const CANCEL = 'APPOINTMENT_CANCEL';
     public const CONFIRM = 'APPOINTMENT_CONFIRM';
+    public const MARK_DONE = 'APPOINTMENT_MARK_DONE';
 
-    private const SUPPORTED = [self::VIEW, self::CANCEL, self::CONFIRM];
+    private const SUPPORTED = [self::VIEW, self::CANCEL, self::CONFIRM, self::MARK_DONE];
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -40,6 +41,7 @@ final class AppointmentVoter extends Voter
             self::VIEW => $this->canView($subject, $user),
             self::CANCEL => $this->canCancel($subject, $user),
             self::CONFIRM => $this->canConfirm($subject, $user),
+            self::MARK_DONE => $this->canMarkDone($subject, $user),
         };
     }
 
@@ -64,6 +66,15 @@ final class AppointmentVoter extends Voter
     private function canConfirm(Appointment $appointment, User $user): bool
     {
         if (AppointmentStatus::PENDING !== $appointment->getStatus()) {
+            return false;
+        }
+
+        return $this->isOwnerDoctor($appointment, $user);
+    }
+
+    private function canMarkDone(Appointment $appointment, User $user): bool
+    {
+        if (AppointmentStatus::CONFIRMED !== $appointment->getStatus()) {
             return false;
         }
 

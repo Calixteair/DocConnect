@@ -3,7 +3,7 @@
 {% block title %}Mon planning · DocConnect{% endblock %}
 
 {% block body %}
-<section class="page-section">
+<section class="page-section" data-controller="cancel">
     <div class="container">
         {% for label, messages in app.flashes(['success', 'error']) %}
             {% for msg in messages %}
@@ -55,17 +55,65 @@
                             <p class="planning-day__empty">Aucun créneau</p>
                         {% else %}
                             {% for slot in daySlots %}
-                                {% set appt = slot.appointment ?? null %}
                                 {% set isBooked = slot.status.value == 'BOOKED' %}
                                 <div class="planning-slot planning-slot--{{ slot.status.value|lower }}">
                                     <span class="planning-slot__time">{{ slot.startAt|date('H:i') }}</span>
                                     {% if isBooked %}
                                         {% set appt = appointmentsBySlot[slot.id] ?? null %}
                                         {% if appt %}
-                                            <span class="planning-slot__patient">{{ appt.patient.user.firstName }} {{ appt.patient.user.lastName|slice(0, 1) }}.</span>
+                                            <span class="planning-slot__patient">
+                                                {{ appt.patient.user.firstName }} {{ appt.patient.user.lastName|slice(0, 1) }}.
+                                                {% if slot.mode.value == 'VIDEO' %}
+                                                    <span class="planning-slot__mode" title="Téléconsultation" aria-label="Téléconsultation">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                                                    </span>
+                                                {% endif %}
+                                            </span>
                                             <span class="badge badge--{{ {'PENDING':'warning','CONFIRMED':'info','DONE':'neutral','CANCELLED':'danger'}[appt.status.value] }}">
                                                 {{ {'PENDING':'En attente','CONFIRMED':'Confirmé','DONE':'Terminé','CANCELLED':'Annulé'}[appt.status.value] }}
                                             </span>
+
+                                            {% set canJoinVisio = slot.mode.value == 'VIDEO'
+                                                and appt.status.value == 'CONFIRMED'
+                                                and now >= slot.startAt|date_modify('-10 minutes')
+                                                and now <= slot.endAt|date_modify('+30 minutes') %}
+                                            {% set canConfirm = appt.status.value == 'PENDING' %}
+                                            {% set canCancel = appt.status.value in ['PENDING', 'CONFIRMED'] %}
+                                            {% set canMarkDone = appt.status.value == 'CONFIRMED' and now > slot.endAt %}
+
+                                            {% if canJoinVisio or canConfirm or canCancel or canMarkDone %}
+                                                <div class="planning-slot__actions">
+                                                    {% if canJoinVisio %}
+                                                        <a href="{{ path('app_visio', { appointmentId: appt.id }) }}" class="btn btn--primary btn--sm">Rejoindre</a>
+                                                    {% endif %}
+                                                    {% if canConfirm %}
+                                                        <form method="post" action="{{ path('app_appointment_confirm', { id: appt.id }) }}" style="display:inline">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('confirm_appointment_' ~ appt.id) }}">
+                                                            <button type="submit" class="btn btn--success btn--sm">Confirmer</button>
+                                                        </form>
+                                                    {% endif %}
+                                                    {% if canMarkDone %}
+                                                        <form method="post" action="{{ path('app_appointment_mark_done', { id: appt.id }) }}" style="display:inline">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('mark_done_appointment_' ~ appt.id) }}">
+                                                            <button type="submit" class="btn btn--secondary btn--sm">Marquer terminé</button>
+                                                        </form>
+                                                    {% endif %}
+                                                    {% if canCancel %}
+                                                        {% set formId = 'doctor-cancel-form-' ~ appt.id %}
+                                                        {% set recap = appt.patient.user.firstName ~ ' ' ~ appt.patient.user.lastName ~ ' — ' ~ slot.startAt|format_datetime(pattern='EEEE d MMMM à HH:mm', locale='fr') %}
+                                                        <form id="{{ formId }}" method="post" action="{{ path('app_appointment_cancel', { id: appt.id }) }}" style="display:inline">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('cancel_appointment_' ~ appt.id) }}">
+                                                        </form>
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn--danger-outline btn--sm"
+                                                            data-action="click->cancel#open"
+                                                            data-form-id="{{ formId }}"
+                                                            data-recap="{{ recap }}"
+                                                        >{{ canConfirm ? 'Refuser' : 'Annuler' }}</button>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
                                         {% else %}
                                             <span class="planning-slot__patient">Occupé</span>
                                         {% endif %}
@@ -78,6 +126,32 @@
                     </div>
                 </div>
             {% endfor %}
+        </div>
+    </div>
+
+    {# ====== Modal d'annulation côté médecin ====== #}
+    <div class="modal" hidden data-open="false" data-cancel-target="modal" role="dialog" aria-modal="true" aria-labelledby="cancel-modal-title">
+        <div class="modal__overlay" data-action="click->cancel#close"></div>
+        <div class="modal__dialog">
+            <button type="button" class="modal__close" aria-label="Fermer" data-action="click->cancel#close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+
+            <h2 class="modal__title" id="cancel-modal-title">Annuler ce rendez-vous ?</h2>
+
+            <div class="modal__recap">
+                <p class="modal__recap-meta" data-cancel-target="recap">—</p>
+            </div>
+
+            <p class="modal__text">
+                Le patient sera prévenu par mail et le créneau redeviendra disponible.
+                Cette action est définitive.
+            </p>
+
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" data-action="click->cancel#close">Conserver le RDV</button>
+                <button type="button" class="btn btn--danger-solid" data-cancel-target="confirmButton" data-action="click->cancel#confirm">Annuler le RDV</button>
+            </div>
         </div>
     </div>
 </section>

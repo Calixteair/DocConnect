@@ -203,21 +203,20 @@ Roadmap en **9 phases**. Chaque phase a un **objectif**, des **tâches** (avec m
 
 ---
 
-## Phase 8 — Visio Jitsi
+## Phase 8 — Visio Jitsi ✅
 
 **Objectif** : un RDV en mode `VIDEO` ouvre une salle Jitsi à l'heure dite.
 
-**Tâches**
-- [ ] Génération nom de salle : `docconnect-<appointment_id>-<random>` au moment du booking.
-- [ ] Stocker `Appointment.video_room` (string nullable).
-- [ ] Page `/app/visio/{appointmentId}` :
-  - vérifie via Voter que l'user est patient OU médecin du RDV,
-  - vérifie que l'heure est dans la fenêtre `[start - 10min, end + 30min]`,
-  - iframe Jitsi `https://meet.jit.si/<room>` plein écran avec sidebar latérale (infos RDV, bouton "raccrocher").
-- [ ] Bouton "Rejoindre la consultation" dans l'espace patient/médecin (visible 10 min avant).
+**Livré**
+- Génération du nom de salle `docconnect-<appointment_id>-<random8hex>` au booking (`AppointmentBookingService`) **et** à la confirmation médecin si la salle manque (filet de sécu pour les RDV créés avant Phase 5 ou les `PENDING` confirmés tardivement).
+- Colonne `appointment.video_room` (string nullable, 120 chars) — migration appliquée.
+- Page `/app/visio/{appointmentId}` : Voter `APPOINTMENT_VIEW` (patient OU médecin owner), check mode `VIDEO`, statut `CONFIRMED`, fenêtre `[start − 10 min, end + 30 min]`. Templates dédiés `not_video.html.twig`, `wrong_status.html.twig`, `out_of_window.html.twig`, `room.html.twig` (iframe `meet.jit.si` + sidebar infos RDV + bouton retour).
+- Bouton **"Rejoindre la visio"** côté patient (carte `_appointment_card.html.twig`) et côté médecin (cellules `doctor_planning.html.twig`).
+- **Bonus gestion médecin** (qui aurait dû être en Phase 5) : Confirmer / Refuser / Annuler / Marquer terminé sur chaque cellule du planning, avec voter `APPOINTMENT_MARK_DONE`, règle "2 h avant" levée pour le médecin, envoi mail à la confirmation.
 
-**Livrables** : flow visio bout-en-bout.
-**DoD** : 2 navigateurs (un patient, un médecin) entrent dans la même salle, audio+video fonctionnent.
+**Gotcha TZ** : le conteneur tourne en UTC mais `php.ini` est en `Africa/Tunis`. Doctrine `datetime_immutable` ne convertit pas — la valeur en base est donc l'heure **Tunis** stockée telle quelle. Pour les tests, décaler le slot via SQL avec une heure Tunis (pas UTC).
+
+**DoD validée** : 2 navigateurs (patient `calixteair7@gmail.com` + médecin `medecin@docconnect.tn`) entrent dans la salle Jitsi du RDV #46 — audio + vidéo OK.
 
 ---
 
@@ -276,7 +275,7 @@ Si le temps le permet après Phase 9 : **dashboard admin** (modération médecin
 | 5 | Prise de RDV | ✅ |
 | 6 | Chatbot OpenRouter | ✅ |
 | 7 | Notifications mail | ✅ |
-| 8 | Visio Jitsi | ⬜ |
+| 8 | Visio Jitsi | ✅ |
 | 9 | Polish & démo | ⬜ |
 
-**Prochaine étape proposée** : Phase 0 — je sors les user stories MVP et 4 maquettes pour validation, **ou** on saute direct en Phase 1 (Setup Docker) si tu préfères voir du code tout de suite.
+**Prochaine étape** : Phase 9 — polish, seed démo (la commande `app:demo:link-doctor-firebase` est déjà prête à être utilisée), 404/500 custom, README, scénario de démo.

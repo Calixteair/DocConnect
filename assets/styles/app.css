@@ -1094,6 +1094,99 @@ a:hover { color: var(--color-primary-hover); }
   color: var(--color-surface);
 }
 
+.btn--success {
+  background: var(--color-success);
+  color: var(--color-surface);
+  border: 1px solid var(--color-success);
+}
+.btn--success:hover {
+  background: #047857;
+  color: var(--color-surface);
+}
+
+/* ============================================================
+   VISIO PAGE (fullscreen iframe + sidebar)
+   ============================================================ */
+.visio-body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-text);
+  height: 100vh;
+  overflow: hidden;
+}
+.visio-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100vh;
+}
+@media (max-width: 768px) {
+  .visio-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+}
+.visio-sidebar {
+  background: var(--color-surface);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border-right: 1px solid var(--color-border);
+  overflow-y: auto;
+}
+.visio-sidebar .brand { color: var(--color-text); text-decoration: none; }
+.visio-sidebar__info { flex: 1 1 auto; }
+.visio-sidebar__label {
+  font-size: var(--text-caption);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+  margin: var(--space-4) 0 var(--space-1);
+}
+.visio-sidebar__doctor {
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  margin: 0 0 var(--space-1);
+  color: var(--color-text);
+}
+.visio-sidebar__time {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-6);
+}
+.visio-sidebar__block { margin-bottom: var(--space-4); }
+.visio-sidebar__block h2 {
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 var(--space-1);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.visio-sidebar__block p,
+.visio-sidebar__block ul {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.55;
+}
+.visio-sidebar__block ul { padding-left: var(--space-4); }
+.visio-sidebar__hangup { width: 100%; }
+
+.visio-stage {
+  position: relative;
+  background: #000;
+}
+.visio-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
 .badge--neutral { background: var(--color-neutral-soft); color: var(--color-text-muted); }
 
 @media (max-width: 640px) {
@@ -1177,6 +1270,16 @@ a:hover { color: var(--color-primary-hover); }
 .planning-slot--blocked { background: var(--color-neutral-soft); }
 .planning-slot--blocked .planning-slot__time,
 .planning-slot--blocked .planning-slot__patient { color: var(--color-text-muted); }
+
+.planning-slot__patient { display: inline-flex; align-items: center; gap: 4px; }
+.planning-slot__mode { display: inline-flex; color: var(--color-primary); }
+.planning-slot__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.planning-slot__actions .btn--sm { height: 26px; padding-inline: 8px; font-size: 11px; }
 
 /* ============================================================
    CHATBOT WIDGET

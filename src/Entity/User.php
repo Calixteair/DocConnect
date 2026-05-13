@@ -69,6 +69,13 @@ class User implements UserInterface
         return $this->firebaseUid;
     }
 
+    /** Réservé aux commandes de maintenance (seed démo, relink). Pas d'usage applicatif. */
+    public function relinkFirebaseUid(string $firebaseUid): self
+    {
+        $this->firebaseUid = $firebaseUid;
+        return $this;
+    }
+
     public function getEmail(): string
     {
         return $this->email;
