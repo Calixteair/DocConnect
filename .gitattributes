@@ -1,0 +1,16 @@
+# Force LF endings for all text files (évite le bug "': No such file or directory"
+# sur Windows + Git autocrlf=true qui convertit le shebang #!/usr/bin/env php en
+# #!/usr/bin/env php\r côté checkout).
+* text=auto eol=lf
+
+# Binaire / pas de conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
